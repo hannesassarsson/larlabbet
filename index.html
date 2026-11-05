@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Leklandet – lek och lär</title>
+    <meta name="description" content="Leklandet är en svensk spelportal för barn 5–10 år. Lekfulla spel om bokstäver, ord, matte, mönster och kunskap – utan konto, reklam eller spårning." />
+    <meta name="theme-color" content="#FFF8EE" />
+    <meta name="color-scheme" content="light" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/icons/icon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Leklandet" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="format-detection" content="telephone=no" />
+    <!--STARTUP_IMAGES-->
+    <link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/startup/ipad-1536x2048.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="/startup/ipad-2048x1536.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 744px) and (device-height: 1133px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/startup/ipad-1488x2266.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 744px) and (device-height: 1133px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="/startup/ipad-2266x1488.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/startup/ipad-1620x2160.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="/startup/ipad-2160x1620.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/startup/ipad-1640x2360.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="/startup/ipad-2360x1640.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/startup/ipad-1668x2224.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="/startup/ipad-2224x1668.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/startup/ipad-1668x2388.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="/startup/ipad-2388x1668.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1210px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/startup/ipad-1668x2420.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1210px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="/startup/ipad-2420x1668.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/startup/ipad-2048x2732.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="/startup/ipad-2732x2048.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 1032px) and (device-height: 1376px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/startup/ipad-2064x2752.png" />
+    <link rel="apple-touch-startup-image" media="(device-width: 1032px) and (device-height: 1376px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="/startup/ipad-2752x2064.png" />
+    <!--/STARTUP_IMAGES-->
+    <style>
+      /* Startskärm som visas direkt, innan appen har laddats. */
+      html,body{margin:0;background:#FFF8EE}
+      #splash{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#FFF8EE;font-family:ui-rounded,"SF Pro Rounded",system-ui,-apple-system,sans-serif;color:#3B2F5C;z-index:9999;transition:opacity .35s ease}
+      #splash.hide{opacity:0;pointer-events:none}
+      #splash svg{width:120px;height:120px;animation:bob 1.6s ease-in-out infinite}
+      #splash b{font-size:30px;letter-spacing:-.5px}
+      @keyframes bob{50%{transform:translateY(-8px)}}
+      @media (prefers-reduced-motion:reduce){#splash svg{animation:none}}
+    </style>
+  </head>
+  <body>
+    <div id="splash" aria-hidden="true">
+      <svg viewBox="0 0 120 120"><rect x="8" y="8" width="104" height="104" rx="30" fill="#FF8A5B"/><circle cx="60" cy="66" r="30" fill="#FFD166"/><circle cx="50" cy="60" r="5" fill="#3B2F5C"/><circle cx="70" cy="60" r="5" fill="#3B2F5C"/><path d="M48 74q12 10 24 0" stroke="#3B2F5C" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M38 40 46 24 56 38 64 22 72 38 82 24 84 42" fill="#7BD389"/></svg>
+      <b>Leklandet</b>
+    </div>
+    <div id="root"></div>
+    <noscript>Leklandet behöver JavaScript för att fungera.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
