@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { IconAddSquare, IconBack, IconCheck, IconShare } from '../components/Icons';
 import { LogoMark } from '../components/Logo';
-import { Link, useRouter } from '../lib/router';
+import { HASH_MODE, Link, useRouter } from '../lib/router';
 import { guessBrowser, useStandalone } from '../lib/platform';
 
 const INK = '#3B2F5C';
@@ -169,7 +169,14 @@ export default function Installera() {
   const guess = useMemo(guessBrowser, []);
 
   let notice: React.ReactNode = null;
-  if (standalone) {
+  if (HASH_MODE) {
+    notice = (
+      <div className="notice notice-warn">
+        <b>Det här är en förhandsvisning.</b>
+        <p>Här kan du prova spelen och se guiden. Själva installationen på hemskärmen och offlineläget fungerar först när Leklandet ligger på en egen webbadress.</p>
+      </div>
+    );
+  } else if (standalone) {
     notice = (
       <div className="notice notice-good">
         <IconCheck />

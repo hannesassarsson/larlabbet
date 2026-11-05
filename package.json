@@ -9,7 +9,8 @@
     "preview": "vite preview --host",
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
-    "icons": "python3 scripts/icons.py"
+    "icons": "python3 scripts/icons.py",
+    "build:preview": "VITE_HASH_ROUTER=1 vite build --base ./ --outDir dist-preview && python3 scripts/preview_page.py"
   },
   "dependencies": {
     "react": "^18.3.1",

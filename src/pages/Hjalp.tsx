@@ -3,7 +3,7 @@ import { Overlay } from '../components/GameShell';
 import { IconAddSquare, IconBack, IconTrash } from '../components/Icons';
 import { SoundToggle } from '../components/SoundToggle';
 import { CATEGORIES, GAMES } from '../games/registry';
-import { Link, useRouter } from '../lib/router';
+import { HASH_MODE, Link, useRouter } from '../lib/router';
 import { getHistory, getRecords, resetProgress } from '../lib/storage';
 import { useStandalone } from '../lib/platform';
 
@@ -121,7 +121,9 @@ export default function Hjalp() {
             <div>
               <b>Offline</b>
               <p className="muted">
-                {offline.ready
+                {HASH_MODE
+                  ? 'Förhandsvisning: offlineläget fungerar först när Leklandet ligger på en egen webbadress.'
+                  : offline.ready
                   ? 'Spelen är nedladdade och fungerar utan internet.'
                   : 'Spelen laddas ned för offlinebruk när sidan öppnas via en säker adress (https).'}
                 {offline.version && <> Version {offline.version}.</>}

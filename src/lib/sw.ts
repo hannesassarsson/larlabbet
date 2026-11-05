@@ -33,7 +33,7 @@ export function applyUpdate() {
 }
 
 export function registerServiceWorker() {
-  if (!('serviceWorker' in navigator) || !import.meta.env.PROD) return;
+  if (!('serviceWorker' in navigator) || !import.meta.env.PROD || import.meta.env.VITE_HASH_ROUTER === '1') return;
   let reloading = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     // Ladda bara om när användaren själv har bett om uppdateringen
