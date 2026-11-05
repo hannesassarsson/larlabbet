@@ -1,7 +1,7 @@
 import { ChoiceGroup, Feedback, GameEnd, GameIntro, GameTopBar, PauseOverlay, Stat, starsFrom } from '../../components/GameShell';
 import { Picture } from '../../components/pictures';
 import { getRecord } from '../../lib/storage';
-import type { GameMeta } from '../registry';
+import type { GameAssignment, GameMeta } from '../registry';
 import { useRound } from '../useRound';
 import { buildPatternRound, describeToken, PATTERN_LEVELS, tokenKey, type PatternLevel, type PatternTask, type ShapeName, type Token } from './logic';
 
@@ -56,11 +56,12 @@ export function TokenView({ token }: { token: Token }) {
   );
 }
 
-export default function MonsterGame({ meta }: { meta: GameMeta }) {
+export default function MonsterGame({ meta, assignment }: { meta: GameMeta; assignment?: GameAssignment }) {
   const r = useRound<PatternTask, PatternLevel>({
-    key: 'monster',
+    key: assignment ? `monster:${assignment.key}` : 'monster',
     gameId: meta.id,
-    defaultLevel: 'latt',
+    defaultLevel: (assignment?.level as never) ?? 'latt',
+    onFinish: assignment?.onFinish,
     build: (level) => buildPatternRound(level),
     autoAdvanceMs: 1700,
   });
@@ -70,7 +71,7 @@ export default function MonsterGame({ meta }: { meta: GameMeta }) {
     const best = getRecord(meta.id, s.level);
     return (
       <GameIntro meta={meta} onStart={() => r.start()}>
-        <ChoiceGroup label="Svårighetsgrad" value={s.level} options={PATTERN_LEVELS} onChange={r.setLevel} />
+        {!assignment && <ChoiceGroup label="Svårighetsgrad" value={s.level} options={PATTERN_LEVELS} onChange={r.setLevel} />}
         {best?.best !== undefined && <p className="setup-note">Ditt bästa: {best.best} av 10</p>}
       </GameIntro>
     );
@@ -88,7 +89,7 @@ export default function MonsterGame({ meta }: { meta: GameMeta }) {
           { label: 'Längsta svit', value: s.bestStreak },
         ]}
         onAgain={() => r.start()}
-        onSettings={r.toIntro}
+        onSettings={assignment ? undefined : r.toIntro}
       />
     );
   }
@@ -146,7 +147,7 @@ export default function MonsterGame({ meta }: { meta: GameMeta }) {
           })}
         </div>
       </div>
-      {s.paused && <PauseOverlay onResume={r.resume} onRestart={() => r.start()} onSettings={r.toIntro} />}
+      {s.paused && <PauseOverlay onResume={r.resume} onRestart={() => r.start()} onSettings={assignment ? undefined : r.toIntro} />}
     </div>
   );
 }

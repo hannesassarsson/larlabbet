@@ -5,6 +5,7 @@ import { installAudioUnlock } from './lib/sound';
 import { registerServiceWorker } from './lib/sw';
 import './styles/global.css';
 import './styles/app.css';
+import './styles/school.css';
 
 installAudioUnlock();
 registerServiceWorker();

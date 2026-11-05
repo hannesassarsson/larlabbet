@@ -1,7 +1,7 @@
 import { ChoiceGroup, Feedback, GameEnd, GameIntro, GameTopBar, PauseOverlay, Stat, starsFrom } from '../../components/GameShell';
 import { Picture, PICTURES, type PicId } from '../../components/pictures';
 import { getRecord } from '../../lib/storage';
-import type { GameMeta } from '../registry';
+import type { GameAssignment, GameMeta } from '../registry';
 import { useRound } from '../useRound';
 import { buildRound, displayLetter, firstLetter, LEVELS, type Level, type LetterQuestion } from './logic';
 
@@ -15,11 +15,12 @@ function Word({ id, highlight }: { id: PicId; highlight: boolean }) {
   );
 }
 
-export default function BokstavsjaktenGame({ meta }: { meta: GameMeta }) {
+export default function BokstavsjaktenGame({ meta, assignment }: { meta: GameMeta; assignment?: GameAssignment }) {
   const r = useRound<LetterQuestion, Level>({
-    key: 'bokstavsjakten',
+    key: assignment ? `bokstavsjakten:${assignment.key}` : 'bokstavsjakten',
     gameId: meta.id,
-    defaultLevel: 'latt',
+    defaultLevel: (assignment?.level as never) ?? 'latt',
+    onFinish: assignment?.onFinish,
     build: (level) => buildRound(level),
   });
   const { s, question: q } = r;
@@ -28,7 +29,7 @@ export default function BokstavsjaktenGame({ meta }: { meta: GameMeta }) {
     const best = getRecord(meta.id, s.level);
     return (
       <GameIntro meta={meta} onStart={() => r.start()}>
-        <ChoiceGroup label="Svårighetsgrad" value={s.level} options={LEVELS} onChange={r.setLevel} />
+        {!assignment && <ChoiceGroup label="Svårighetsgrad" value={s.level} options={LEVELS} onChange={r.setLevel} />}
         {best?.best !== undefined && <p className="setup-note">Ditt bästa: {best.best} av 10</p>}
       </GameIntro>
     );
@@ -45,7 +46,7 @@ export default function BokstavsjaktenGame({ meta }: { meta: GameMeta }) {
           { label: 'Längsta svit', value: s.bestStreak },
         ]}
         onAgain={() => r.start()}
-        onSettings={r.toIntro}
+        onSettings={assignment ? undefined : r.toIntro}
       />
     );
   }
@@ -99,7 +100,7 @@ export default function BokstavsjaktenGame({ meta }: { meta: GameMeta }) {
           })}
         </div>
       </div>
-      {s.paused && <PauseOverlay onResume={r.resume} onRestart={() => r.start()} onSettings={r.toIntro} />}
+      {s.paused && <PauseOverlay onResume={r.resume} onRestart={() => r.start()} onSettings={assignment ? undefined : r.toIntro} />}
     </div>
   );
 }

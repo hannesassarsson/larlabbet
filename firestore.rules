@@ -1,0 +1,152 @@
+rules_version = '2';
+
+// Leklandet – behörigheter i Firestore.
+//
+// Principer:
+// - Lärare (e-post + lösenord, roll "teacher") äger sina klasser och ser bara dem.
+// - Elever loggar in anonymt och kopplas till en elev med en elevkod (loginKeys/{kod}).
+//   En elev ser bara sin egen elevpost och sin klass uppdrag och glosor.
+//   Byter läraren kod slutar den gamla koden fungera direkt.
+// - Föräldrar (e-post + lösenord, roll "parent") kopplas till ett barn med en
+//   föräldrakod (parentKeys/{kod}) och ser bara det barnets uppdrag och resultat.
+// - Koder kan bara slås upp en i taget (get), aldrig listas.
+service cloud.firestore {
+  match /databases/{db}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function uid() { return request.auth.uid; }
+    function hasRole(r) {
+      return signedIn()
+        && exists(/databases/$(db)/documents/users/$(uid()))
+        && get(/databases/$(db)/documents/users/$(uid())).data.role == r;
+    }
+    function isTeacherUser() { return hasRole('teacher'); }
+    function isParentUser() { return hasRole('parent'); }
+
+    function isTeacherOf(cid) {
+      return signedIn()
+        && exists(/databases/$(db)/documents/classes/$(cid))
+        && get(/databases/$(db)/documents/classes/$(cid)).data.teacherId == uid();
+    }
+
+    // Elev: en members-post som pekar på en elevkod som fortfarande finns.
+    function member() { return get(/databases/$(db)/documents/members/$(uid())).data; }
+    function isStudentIn(cid) {
+      return signedIn()
+        && exists(/databases/$(db)/documents/members/$(uid()))
+        && member().classId == cid
+        && exists(/databases/$(db)/documents/loginKeys/$(member().code));
+    }
+    function isStudent(cid, sid) { return isStudentIn(cid) && member().studentId == sid; }
+
+    // Förälder: en koppling vars föräldrakod fortfarande finns.
+    function child(sid) { return get(/databases/$(db)/documents/parents/$(uid())/children/$(sid)).data; }
+    function isParentOf(sid) {
+      return signedIn()
+        && exists(/databases/$(db)/documents/parents/$(uid())/children/$(sid))
+        && exists(/databases/$(db)/documents/parentKeys/$(child(sid).code));
+    }
+    function isParentIn(cid) {
+      return signedIn()
+        && exists(/databases/$(db)/documents/parents/$(uid())/classes/$(cid))
+        && exists(/databases/$(db)/documents/parentKeys/$(get(/databases/$(db)/documents/parents/$(uid())/classes/$(cid)).data.code));
+    }
+
+    // ---------- Användarprofiler (bara vuxna) ----------
+    match /users/{u} {
+      allow read: if signedIn() && uid() == u;
+      allow create: if signedIn() && uid() == u
+        && request.auth.token.firebase.sign_in_provider == 'password'
+        && request.resource.data.role in ['teacher', 'parent']
+        && request.resource.data.keys().hasOnly(['role', 'name', 'email', 'createdAt']);
+      allow update: if signedIn() && uid() == u
+        && request.resource.data.role == resource.data.role;
+      allow delete: if false;
+    }
+
+    // ---------- Klasser ----------
+    match /classes/{cid} {
+      allow create: if isTeacherUser()
+        && request.resource.data.teacherId == uid()
+        && request.resource.data.keys().hasOnly(['name', 'grade', 'teacherId', 'createdAt']);
+      allow read: if signedIn()
+        && (resource.data.teacherId == uid() || isStudentIn(cid) || isParentIn(cid));
+      allow update: if isTeacherOf(cid)
+        && request.resource.data.teacherId == resource.data.teacherId;
+      allow delete: if isTeacherOf(cid);
+
+      match /students/{sid} {
+        allow read: if isTeacherOf(cid) || isStudent(cid, sid) || isParentOf(sid);
+        allow create, delete: if isTeacherOf(cid);
+        // Läraren får ändra allt. Eleven får bara spara sina egna resultat.
+        allow update: if isTeacherOf(cid)
+          || (isStudent(cid, sid)
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['progress', 'lastActive']));
+      }
+
+      // Elev- och föräldrakoder syns bara för läraren.
+      match /studentCodes/{sid} {
+        allow read, write: if isTeacherOf(cid);
+      }
+
+      match /assignments/{aid} {
+        allow read: if isTeacherOf(cid) || isStudentIn(cid) || isParentIn(cid);
+        allow write: if isTeacherOf(cid);
+      }
+
+      match /wordlists/{wid} {
+        allow read: if isTeacherOf(cid) || isStudentIn(cid) || isParentIn(cid);
+        allow write: if isTeacherOf(cid);
+      }
+    }
+
+    // ---------- Koder ----------
+    match /loginKeys/{code} {
+      allow get: if signedIn();
+      allow list: if false;
+      allow create: if isTeacherOf(request.resource.data.classId)
+        && request.resource.data.teacherId == uid();
+      allow update: if false;
+      allow delete: if signedIn() && resource.data.teacherId == uid();
+    }
+
+    match /parentKeys/{code} {
+      allow get: if signedIn();
+      allow list: if false;
+      allow create: if isTeacherOf(request.resource.data.classId)
+        && request.resource.data.teacherId == uid();
+      allow update: if false;
+      allow delete: if signedIn() && resource.data.teacherId == uid();
+    }
+
+    // ---------- Elevens enhet ----------
+    match /members/{u} {
+      allow read, delete: if signedIn() && uid() == u;
+      allow create, update: if signedIn() && uid() == u
+        && request.auth.token.firebase.sign_in_provider == 'anonymous'
+        && request.resource.data.keys().hasOnly(['classId', 'studentId', 'code', 'at'])
+        && exists(/databases/$(db)/documents/loginKeys/$(request.resource.data.code))
+        && get(/databases/$(db)/documents/loginKeys/$(request.resource.data.code)).data.classId == request.resource.data.classId
+        && get(/databases/$(db)/documents/loginKeys/$(request.resource.data.code)).data.studentId == request.resource.data.studentId;
+    }
+
+    // ---------- Föräldrakopplingar ----------
+    match /parents/{u}/children/{sid} {
+      allow read, delete: if signedIn() && uid() == u;
+      allow create: if signedIn() && uid() == u && isParentUser()
+        && request.resource.data.keys().hasOnly(['classId', 'code', 'at'])
+        && exists(/databases/$(db)/documents/parentKeys/$(request.resource.data.code))
+        && get(/databases/$(db)/documents/parentKeys/$(request.resource.data.code)).data.studentId == sid
+        && get(/databases/$(db)/documents/parentKeys/$(request.resource.data.code)).data.classId == request.resource.data.classId;
+      allow update: if false;
+    }
+
+    match /parents/{u}/classes/{cid} {
+      allow read, delete: if signedIn() && uid() == u;
+      allow create, update: if signedIn() && uid() == u && isParentUser()
+        && request.resource.data.keys().hasOnly(['code', 'at'])
+        && exists(/databases/$(db)/documents/parentKeys/$(request.resource.data.code))
+        && get(/databases/$(db)/documents/parentKeys/$(request.resource.data.code)).data.classId == cid;
+    }
+  }
+}

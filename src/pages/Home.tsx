@@ -7,6 +7,8 @@ import { CATEGORIES, GAMES, getGame, searchGames, type CategoryId, type GameMeta
 import { Link } from '../lib/router';
 import { getHistory, getRecords } from '../lib/storage';
 import { useStandalone } from '../lib/platform';
+import { ACTIVITIES } from '../curriculum';
+import { SUBJECTS } from '../curriculum/types';
 
 function CategoryIcon({ id }: { id: CategoryId }) {
   const c = '#3B2F5C';
@@ -112,6 +114,9 @@ export default function Home() {
               <IconAddSquare /> <span>Lägg till på iPad</span>
             </Link>
           )}
+          <Link to="/skola" className="btn btn-soft nav-install">
+            <span className="nav-school-dot" aria-hidden="true" /> <span>Skolan</span>
+          </Link>
           <SoundToggle />
         </nav>
       </header>
@@ -151,6 +156,25 @@ export default function Home() {
           </div>
         </section>
       )}
+
+      <section className="container section" aria-labelledby="school-title">
+        <div className="library-head">
+          <h2 id="school-title" className="section-title">
+            Skolämnen F–6
+          </h2>
+          <Link to="/skola" className="btn btn-soft">
+            Logga in som elev, lärare eller förälder
+          </Link>
+        </div>
+        <div className="subject-grid">
+          {SUBJECTS.map((sub) => (
+            <Link key={sub.id} to={`/ova/amne/${sub.id}`} className="subject-card" style={{ ['--subject' as string]: sub.color, ['--subject-soft' as string]: sub.soft }}>
+              <b>{sub.short}</b>
+              <span>{ACTIVITIES.filter((a) => a.subject === sub.id).length} övningar</span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <section className="container section" aria-labelledby="cat-title">
         <h2 id="cat-title" className="section-title">Spelkategorier</h2>
@@ -253,7 +277,7 @@ export default function Home() {
             <IconAddSquare /> Så lägger du till Leklandet på iPad
           </Link>
         )}
-        <p className="footer-note">Utan reklam, konto och spårning. Allt sparas bara på den här enheten.</p>
+        <p className="footer-note">Ingen reklam och ingen spårning. Fri lek kräver inget konto och sparas bara på den här enheten.</p>
       </footer>
     </div>
   );

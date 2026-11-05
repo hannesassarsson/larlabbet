@@ -15,7 +15,7 @@ function normalize(p: string) {
 
 /**
  * Förhandsläge (VITE_HASH_ROUTER=1): sidan ligger där bara enkla #namn-adresser
- * fungerar, t.ex. #installera eller #spel-memory. Annars används vanliga sökvägar.
+ * fungerar, t.ex. #installera eller #spel--memory. Annars används vanliga sökvägar.
  */
 export const HASH_MODE = import.meta.env.VITE_HASH_ROUTER === '1';
 
@@ -23,15 +23,14 @@ function readPath() {
   if (!HASH_MODE) return normalize(window.location.pathname);
   const h = window.location.hash.replace(/^#/, '');
   if (!h) return '/';
-  if (h.startsWith('spel-')) return '/spel/' + h.slice(5);
-  return '/' + h;
+  return '/' + h.split('--').join('/');
 }
 
 /** Sökväg → adress i webbläsaren. */
 export function hrefFor(path: string) {
   if (!HASH_MODE) return path;
   if (path === '/') return '#';
-  return '#' + path.slice(1).replace(/^spel\//, 'spel-');
+  return '#' + path.slice(1).split('/').join('--');
 }
 
 export function RouterProvider({ children }: { children: ReactNode }) {
@@ -72,6 +71,19 @@ export function useRouter() {
 }
 
 /** Länk som navigerar inom appen utan att ladda om sidan. */
+/** Matchar en sökväg mot ett mönster som "/larare/klass/:id". */
+export function match(path: string, pattern: string): Record<string, string> | null {
+  const a = path.split('/').filter(Boolean);
+  const b = pattern.split('/').filter(Boolean);
+  if (a.length !== b.length) return null;
+  const out: Record<string, string> = {};
+  for (let i = 0; i < b.length; i++) {
+    if (b[i].startsWith(':')) out[b[i].slice(1)] = decodeURIComponent(a[i]);
+    else if (b[i] !== a[i]) return null;
+  }
+  return out;
+}
+
 export function Link({ to, onClick, ...rest }: AnchorHTMLAttributes<HTMLAnchorElement> & { to: string }) {
   const { navigate } = useRouter();
   return (

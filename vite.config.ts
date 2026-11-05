@@ -51,6 +51,6 @@ function serviceWorker(): Plugin {
 
 export default defineConfig({
   plugins: [react(), serviceWorker()],
-  build: { target: 'es2019' },
+  build: { target: ['es2020', 'safari14'] },
   test: { environment: 'node' },
 });

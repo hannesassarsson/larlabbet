@@ -116,6 +116,13 @@ export const GAMES: GameMeta[] = [
   },
 ];
 
+/** När ett fristående spel körs som uppdrag: låst nivå och rapportering av resultatet. */
+export interface GameAssignment {
+  key: string;
+  level?: string;
+  onFinish: (score: number, max: number) => void;
+}
+
 export function getGame(id: string) {
   return GAMES.find((g) => g.id === id);
 }

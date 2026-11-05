@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { GameMeta } from '../games/registry';
 import { useRouter } from '../lib/router';
 import { markPlayed } from '../lib/storage';
@@ -12,6 +12,10 @@ import { SoundToggle } from './SoundToggle';
  * ------------------------------------------------------------------ */
 
 export type Phase = 'intro' | 'playing' | 'done';
+
+/** Vart "tillbaka" leder. Startsidan som standard, elevens sida när spelet är ett uppdrag. */
+export const ExitContext = createContext('/');
+const useExit = () => useContext(ExitContext);
 
 export function GameIntro({
   meta,
@@ -29,10 +33,11 @@ export function GameIntro({
   onResume?: () => void;
 }) {
   const { navigate } = useRouter();
+  const exit = useExit();
   return (
     <div className="game-intro page" style={{ ['--game' as string]: meta.color, ['--game-soft' as string]: meta.soft }}>
       <div className="game-intro-top">
-        <button className="icon-btn" onClick={() => navigate('/')} aria-label="Tillbaka till startsidan">
+        <button className="icon-btn" onClick={() => navigate(exit)} aria-label="Tillbaka till startsidan">
           <IconBack />
         </button>
         <SoundToggle />
@@ -129,10 +134,11 @@ export function GameTopBar({
   onRestart: () => void;
 }) {
   const { navigate } = useRouter();
+  const exit = useExit();
   const [confirm, setConfirm] = useState(false);
   return (
     <header className="game-topbar">
-      <button className="icon-btn" onClick={() => navigate('/')} aria-label="Tillbaka till startsidan">
+      <button className="icon-btn" onClick={() => navigate(exit)} aria-label="Tillbaka till startsidan">
         <IconHome />
       </button>
       <div className="game-topbar-mid">
@@ -214,6 +220,7 @@ export function PauseOverlay({
   onSettings?: () => void;
 }) {
   const { navigate } = useRouter();
+  const exit = useExit();
   return (
     <Overlay onClose={onResume} label="Paus">
       <div className="pause-badge" aria-hidden="true">
@@ -233,7 +240,7 @@ export function PauseOverlay({
             Byt nivå
           </button>
         )}
-        <button className="btn btn-big btn-soft" onClick={() => navigate('/')}>
+        <button className="btn btn-big btn-soft" onClick={() => navigate(exit)}>
           <IconHome /> Till startsidan
         </button>
       </div>
@@ -276,6 +283,7 @@ export function GameEnd({
   onSettings?: () => void;
 }) {
   const { navigate } = useRouter();
+  const exit = useExit();
   const [praise] = useState(() => PRAISE[Math.floor(Math.random() * PRAISE.length)]);
   useEffect(() => {
     play('win');
@@ -304,7 +312,7 @@ export function GameEnd({
               Byt nivå
             </button>
           )}
-          <button className="btn btn-big btn-soft" onClick={() => navigate('/')}>
+          <button className="btn btn-big btn-soft" onClick={() => navigate(exit)}>
             <IconHome /> Fler spel
           </button>
         </div>

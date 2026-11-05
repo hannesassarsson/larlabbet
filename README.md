@@ -1,7 +1,75 @@
 # Leklandet
 
-Svensk spelportal för barn 5–10 år, byggd som installerbar webbapp (PWA) för iPad.
-Inget konto, ingen reklam, ingen spårning – allt sparas lokalt på enheten.
+Svensk spelportal och skolplattform för förskoleklass till årskurs 6, byggd som installerbar webbapp (PWA) för iPad.
+
+- **Fri lek** – sju spel och ett övningsbibliotek. Inget konto, allt sparas lokalt.
+- **Skolan** – lärare skapar klasser och ger uppdrag ur kursplanen, elever loggar in med kod eller QR, föräldrar följer sitt barn med en föräldrakod. Data i Firebase (Authentication + Firestore).
+- Ingen reklam och ingen spårning.
+
+## Innehåll enligt kursplanen
+
+66 övningar, märkta med ämne, årskurs och område i Lgr22:s centrala innehåll:
+
+| Ämne | Övningar | Exempel |
+|---|---|---|
+| Matematik F–6 | 26 | räkna, talraden, klockan, bråk, gångertabellen, decimaltal, negativa tal, procent, ekvationer, area, vinklar, lägesmått, koordinater, lästal, mönster |
+| Svenska F–6 | 18 | bokstavsljud, alfabetet, rim, stavning, stor bokstav och punkt, en/ett, plural, skiljetecken, ordklasser, verb i preteritum, sambandsord, sj-/tj-/j-ljud, texttyper |
+| Engelska 1–6 | 13 | tolv färdiga glosteman och lärarens egna glosor (svenska→engelska, engelska→svenska, stava) |
+| SO F–6 | 9 | stenålder–järnålder, nordisk mytologi, förr och nu, tidslinjer, vikingatid–medeltid, Vasatiden och stormaktstiden, 1800-talet, geografi, samhället |
+
+Engelska börjar i årskurs 1 eftersom kursplanen inte omfattar förskoleklass.
+
+**Nya läroplaner:** en tioårig grundskola och nya läroplaner planeras från hösten 2028 (förskoleklassen blir årskurs 1).
+Skolverkets förslag ska lämnas senast 14 maj 2027. Övningarna är därför märkta med område i stället för att byggas
+in i en fast struktur – när de nya kursplanerna kommer räcker det att ändra märkningen i `src/curriculum/`.
+
+## Skolan: roller och behörigheter
+
+| Roll | Inloggning | Ser |
+|---|---|---|
+| Lärare | E-post + lösenord | Sina klasser, elever, koder, uppdrag, glosor och resultat |
+| Elev | Elevkod eller QR-länk (`/in/KOD`), anonym Firebase-inloggning | Sin egen elevpost och klassens uppdrag och glosor |
+| Förälder | E-post + lösenord + föräldrakod | Bara det kopplade barnets uppdrag och resultat |
+
+- Elever har inga e-postadresser eller lösenord – läraren ger dem ett alias och en bild.
+- Byter läraren elevens koder slutar de gamla att fungera direkt, även för föräldrar och redan inloggade enheter.
+- Koder går bara att slå upp en i taget, aldrig att lista.
+- Reglerna finns i `firestore.rules`.
+
+### Demoläge
+
+Utan Firebase-konfiguration körs skoldelen i **demoläge**: allt sparas i webbläsaren på enheten, och en gul ruta talar om det.
+Bra för att prova alla tre rollerna på samma dator. Lösenord sparas som SHA-256-hash lokalt, men demoläget är inte avsett för riktiga elever.
+
+## Sätta upp Firebase (gratisplanen Spark)
+
+1. Skapa ett projekt på [console.firebase.google.com](https://console.firebase.google.com). Google Analytics behövs inte.
+2. **Authentication → Sign-in method:** aktivera **E-post/lösenord** och **Anonym**.
+3. **Firestore Database → Skapa databas:** välj produktionsläge och en plats i Europa.
+4. **Projektinställningar → Dina appar → Webbapp:** registrera en app och kopiera konfigurationen till `.env.local`
+   (mall i `.env.example`).
+5. Lägg in säkerhetsreglerna, antingen genom att klistra in `firestore.rules` under Firestore → Regler, eller:
+   ```bash
+   npx firebase-tools login
+   npx firebase-tools use --add          # välj projektet
+   npx firebase-tools deploy --only firestore:rules
+   ```
+6. Publicera appen gratis med HTTPS via Firebase Hosting (`firebase.json` finns):
+   ```bash
+   npm run build
+   npx firebase-tools deploy --only hosting
+   ```
+   Adressen blir `https://<projekt-id>.web.app`. Den domänen är automatiskt godkänd för inloggning.
+
+Firebase-koden (~205 kB komprimerat) laddas bara när någon öppnar skoldelen, så fri lek påverkas inte.
+Kräver Safari 14 / iPadOS 14 eller senare.
+
+### Innan riktiga elever används
+
+- Skolan är personuppgiftsansvarig och behöver normalt ett personuppgiftsbiträdesavtal med den som driver tjänsten,
+  och en konsekvensbedömning (DPIA).
+- Välj en Firestore-plats i EU och läs Googles villkor för Firebase (databehandlingsavtal).
+- Granska `firestore.rules` och testa dem i Firebase-konsolens regelsimulator eller med Firebase-emulatorn.
 
 ## Spel
 
@@ -13,6 +81,8 @@ Inget konto, ingen reklam, ingen spårning – allt sparas lokalt på enheten.
 | Matteäventyret | Matematik | Plus/minus/blandat, talområde 5–100, prickar som stöd upp till 10 |
 | Mönsterdetektiven | Minne och logik | Genererade mönster: färg, form, bild, storlek, tal, prickar, vridning |
 | Sant eller falskt | Quiz och kunskap | 51 påståenden med förklaringar, ämnesval |
+
+Alla kursplaneövningar finns också fritt under **Öva ämnen** (`/ova`).
 | Målarlådan | Kreativitet | Fritt ritande, penslar, stämplar, sudd, ångra, spara bild |
 
 ## Kom igång
@@ -32,6 +102,7 @@ npm run icons      # återskapa ikoner och startbilder (kräver rsvg-convert)
 `dist/` är en statisk webbplats. **HTTPS krävs** för att service workern ska registreras och för att
 installationen på hemskärmen ska fungera fullt ut (undantag: `localhost`).
 
+- **Firebase Hosting:** se ovan – passar bäst om skoldelen används.
 - **Vercel:** `vercel.json` finns (SPA-omskrivning och cachehuvuden). Byggkommando `npm run build`, utdatamapp `dist`.
 - **Netlify / Cloudflare Pages:** `public/_redirects` och `public/_headers` följer med i bygget.
 - Annan server: skicka alla okända sökvägar till `index.html`, och servera `sw.js` och `index.html` med `Cache-Control: no-cache`.
@@ -40,6 +111,10 @@ installationen på hemskärmen ska fungera fullt ut (undantag: `localhost`).
 
 ```
 src/
+  curriculum/               kursplaneinnehåll: ämnen, årskurser, 66 övningar (generatorer och frågebanker)
+  play/                     gemensam spelare för övningarna (flerval, ordning, stavning) och figurer
+  backend/                  gränssnitt + demoläge (local.ts) + Firebase (firebase.ts)
+  pages/skola, elev, larare, foralder   skoldelen
   games/<spel>/logic.ts     spelregler och generering (rena funktioner, testade)
   games/<spel>/*Game.tsx    presentation
   games/useRound.ts         gemensam motor för frågespel (poäng, spärr mot dubbeltryck, sparande)

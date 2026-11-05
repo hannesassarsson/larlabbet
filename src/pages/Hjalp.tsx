@@ -87,12 +87,19 @@ export default function Hjalp() {
         <div className="card info-box">
           <h2>Integritet</h2>
           <ul>
-            <li>Inget konto, ingen inloggning och ingen reklam.</li>
-            <li>Ingen spårning och inga tredjepartstjänster. Leklandet hämtar inget från andra webbplatser.</li>
-            <li>Resultat, historik och inställningar sparas bara lokalt på den här enheten.</li>
             <li>
-              En webbapp på hemskärmen kan ha egen lagring, skild från Safari. Resultat som sparats i Safari följer därför
-              inte alltid med till hemskärmsikonen.
+              <b>Fri lek</b> kräver inget konto. Resultat och inställningar sparas bara på enheten.
+            </li>
+            <li>
+              <b>Skoldelen</b> (lärare, elever och föräldrar) sparar uppgifter i en databas: lärarens och förälderns namn och
+              e-post, klassens namn, elevernas alias och bild, uppdrag och resultat.
+            </li>
+            <li>Eleverna har inga e-postadresser, lösenord eller riktiga efternamn i systemet. De loggar in med en kod.</li>
+            <li>En förälder ser bara sitt eget barn. Läraren kan byta koder direkt om ett kort kommer bort.</li>
+            <li>Ingen reklam, ingen spårning och inga tredjepartstjänster utöver databasen.</li>
+            <li>
+              En skola som använder skoldelen är personuppgiftsansvarig och behöver normalt ett biträdesavtal med den som
+              driver tjänsten.
             </li>
           </ul>
         </div>

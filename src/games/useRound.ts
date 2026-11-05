@@ -32,6 +32,8 @@ export interface RoundOptions<Q, L> {
   singleAttempt?: boolean;
   /** Gå vidare automatiskt efter rätt svar (ms). Sätt till 0 för manuell "Nästa". */
   autoAdvanceMs?: number;
+  /** Anropas när en omgång är klar (t.ex. för att spara ett uppdrag). */
+  onFinish?: (score: number, max: number) => void;
 }
 
 export function useRound<Q, L extends string | number>(opts: RoundOptions<Q, L>) {
@@ -75,6 +77,7 @@ export function useRound<Q, L extends string | number>(opts: RoundOptions<Q, L>)
   };
 
   const finish = (st: RoundState<Q, L>) => {
+    opts.onFinish?.(st.score, st.questions.length);
     const stars = starsFrom(st.score, st.questions.length);
     const record = saveResult(opts.gameId, {
       key: String(st.level),
