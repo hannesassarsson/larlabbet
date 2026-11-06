@@ -1,0 +1,674 @@
+/* ================= Arbetsblad ================= */
+.worksheet-page {
+  padding-bottom: 30px;
+}
+.ws-layout {
+  display: grid;
+  grid-template-columns: 400px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+@media (max-width: 1100px) {
+  .ws-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.ws-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.ws-step {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 22px;
+}
+.ws-step h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 21px;
+  font-weight: 900;
+}
+.step-num {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-size: 16px;
+}
+.grade-row {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+.grade-btn {
+  min-height: 56px;
+  border-radius: 16px;
+  border: 3px solid var(--line);
+  background: var(--surface);
+  font-size: 20px;
+  font-weight: 900;
+}
+.grade-btn[aria-checked='true'] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+.suggest-btn {
+  background: var(--coral);
+  color: var(--ink);
+  box-shadow: 0 4px 0 #d9693d;
+}
+.suggest-btn:active {
+  box-shadow: 0 1px 0 #d9693d;
+}
+.toggles {
+  display: grid;
+  gap: 10px;
+}
+.ws-step .choice-group {
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+}
+.ws-step .choice {
+  min-height: 70px;
+  font-size: 17px;
+}
+.ws-step .choice small {
+  font-size: 13px;
+}
+.ws-actions {
+  position: sticky;
+  bottom: calc(10px + var(--safe-bottom));
+  z-index: 5;
+}
+@media (max-width: 1100px) {
+  .ws-actions {
+    position: static;
+  }
+}
+.ws-action-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.ws-action-row .btn {
+  padding: 0 12px;
+  font-size: 17px;
+}
+.saved-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.saved-list li {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.saved-open {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 56px;
+  padding: 8px 14px;
+  border: 3px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  text-align: left;
+}
+.saved-open b {
+  font-size: 16px;
+}
+.saved-open small {
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+.catalog-overlay {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+.catalog-overlay-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.catalog-overlay .catalog-list {
+  max-height: 55vh;
+}
+.overlay-card:has(.catalog-overlay) {
+  width: min(640px, 100%);
+}
+.ws-preview {
+  min-width: 0;
+}
+.ws-preview-label {
+  font-weight: 800;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+}
+.ws-footnote {
+  margin-top: 20px;
+}
+.empty-paper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 140mm !important;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* ---------- Själva papperet ---------- */
+.paper > * + * {
+  margin-top: 6mm;
+}
+.paper > .ws-foot {
+  margin-top: auto;
+}
+.paper {
+  --p-ink: #1e1a2e;
+  --p-soft: #5d5873;
+  --p-line: #8f8aa3;
+  --p-fs: 11.5pt;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 13mm 14mm 12mm;
+  margin: 0 0 24px;
+  background: #fff;
+  color: var(--p-ink);
+  box-shadow: 0 2px 0 rgba(59, 47, 92, 0.05), 0 14px 34px rgba(59, 47, 92, 0.14);
+  border-radius: 6px;
+  font-size: var(--p-fs);
+  line-height: 1.35;
+  display: flex;
+  flex-direction: column;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.paper.big {
+  --p-fs: 15pt;
+}
+.ws-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 3mm 6mm;
+  align-items: center;
+  padding-bottom: 4mm;
+  border-bottom: 0.6mm solid var(--p-ink);
+}
+.ws-brand {
+  display: flex;
+  align-items: center;
+  gap: 2mm;
+  font-weight: 900;
+  font-size: 10pt;
+  grid-row: span 2;
+  align-self: start;
+}
+.ws-title h1 {
+  font-size: 1.75em;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.ws-title p {
+  font-size: 0.85em;
+  color: var(--p-soft);
+  font-weight: 700;
+}
+.ws-name {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4mm 10mm;
+  font-weight: 700;
+  font-size: 0.95em;
+}
+.ws-name span {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2mm;
+}
+.ws-section {
+  display: block;
+}
+.ws-section > * + * {
+  margin-top: 3.5mm;
+}
+.ws-section-head {
+  border-left: 2.2mm solid var(--subject);
+  padding-left: 3mm;
+  break-inside: avoid;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+.ws-section-head h2 {
+  font-size: 1.2em;
+  font-weight: 900;
+}
+.ws-section-head p {
+  font-size: 0.95em;
+  color: var(--p-soft);
+  font-weight: 600;
+}
+.ws-problem {
+  padding: 4mm;
+  border: 0.4mm dashed #c0392b;
+  border-radius: 3mm;
+  color: #a0302b;
+}
+.ws-items,
+.ws-glosor,
+.ws-order {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ws-items {
+  display: grid;
+  gap: 4.5mm 8mm;
+}
+.two-col .ws-items {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.layout-compact .ws-items {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5mm 8mm;
+}
+.paper.big .layout-compact .ws-items {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.ws-item {
+  display: flex;
+  gap: 2.5mm;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  min-width: 0;
+}
+.ws-num {
+  flex: none;
+  min-width: 6.5mm;
+  font-weight: 900;
+  color: var(--p-soft);
+}
+.ws-num::after {
+  content: '.';
+}
+.ws-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8mm;
+}
+.ws-prompt {
+  font-weight: 700;
+}
+.layout-compact .ws-prompt {
+  font-size: 1.15em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.ws-detail {
+  font-weight: 600;
+  padding: 1.5mm 3mm;
+  border: 0.3mm solid var(--p-line);
+  border-radius: 2mm;
+  align-self: flex-start;
+}
+.ws-answer-row {
+  display: flex;
+  gap: 4mm;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.ws-answer {
+  flex: 1;
+  min-width: 40mm;
+}
+.ws-visual {
+  flex: none;
+  width: 30mm;
+  height: 30mm;
+}
+.paper.big .ws-visual {
+  width: 38mm;
+  height: 38mm;
+}
+.ws-visual.v-count,
+.ws-visual.v-marbles {
+  width: 34mm;
+  height: 34mm;
+}
+.ws-visual.v-base10,
+.ws-visual.v-rect {
+  width: 42mm;
+  height: 32mm;
+}
+.ws-visual.v-thermo {
+  width: 24mm;
+  height: 34mm;
+}
+.ws-visual svg,
+.ws-pic-img svg,
+.ws-option-img svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.ws-blank {
+  display: inline-block;
+  width: 20mm;
+  height: 1.2em;
+  margin: 0 1.5mm;
+  border-bottom: 0.35mm solid var(--p-ink);
+  vertical-align: baseline;
+}
+.ws-blank.wide {
+  width: 42mm;
+}
+.ws-write {
+  font-weight: 600;
+  color: var(--p-soft);
+}
+.ws-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, max-content));
+  gap: 1.8mm 6mm;
+}
+.two-col .ws-options:not(.long) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.ws-options.long {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.6mm;
+}
+.ws-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.6mm;
+}
+.ws-option-img {
+  width: 14mm;
+  height: 14mm;
+}
+.ws-letter {
+  display: inline-grid;
+  place-items: center;
+  width: 5mm;
+  height: 5mm;
+  border-radius: 50%;
+  border: 0.3mm solid var(--p-line);
+  font-size: 0.7em;
+  font-weight: 800;
+  color: var(--p-soft);
+  flex: none;
+}
+.ws-pics {
+  display: flex;
+  gap: 3mm;
+  flex-wrap: wrap;
+}
+.ws-pic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1mm;
+}
+.ws-pic-img {
+  width: 20mm;
+  height: 20mm;
+}
+.paper.big .ws-pic-img {
+  width: 25mm;
+  height: 25mm;
+}
+.ws-pics.n6 .ws-pic-img {
+  width: 16mm;
+  height: 16mm;
+}
+.ws-box {
+  display: inline-block;
+  width: 7mm;
+  height: 7mm;
+  border: 0.35mm solid var(--p-ink);
+  border-radius: 1.2mm;
+  flex: none;
+}
+.ws-box.big {
+  width: 10mm;
+  height: 11mm;
+}
+.ws-order {
+  display: grid;
+  gap: 2mm;
+}
+.ws-order li {
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+  font-weight: 600;
+}
+.ws-spell {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5mm;
+}
+.ws-spell-boxes {
+  display: flex;
+  gap: 1.5mm;
+  flex-wrap: wrap;
+}
+.ws-bank {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5mm;
+}
+.ws-bank span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 6mm;
+  height: 6mm;
+  padding: 0 1mm;
+  border-radius: 1.2mm;
+  background: #f1eef7;
+  font-weight: 900;
+  font-size: 0.9em;
+}
+.ws-glosor {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5.5mm 10mm;
+}
+.ws-glosor li {
+  display: flex;
+  align-items: flex-end;
+  gap: 2mm;
+  break-inside: avoid;
+}
+.ws-cue {
+  font-weight: 800;
+  min-width: 26mm;
+}
+.ws-glosor .ws-blank.wide {
+  flex: 1;
+  width: auto;
+}
+.ws-foot {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 6mm;
+  padding-top: 3mm;
+  border-top: 0.3mm solid var(--p-line);
+  font-size: 0.75em;
+  color: var(--p-soft);
+}
+
+/* Facit */
+.facit-grid {
+  display: grid;
+  gap: 8mm;
+}
+.facit-grid.n2,
+.facit-grid.n3,
+.facit-grid.n4 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.facit-sheet h2 {
+  font-size: 1.3em;
+  font-weight: 900;
+  margin-bottom: 2mm;
+}
+.facit-section {
+  break-inside: avoid;
+  margin-bottom: 4mm;
+}
+.facit-section h3 {
+  font-size: 1em;
+  font-weight: 900;
+  margin-bottom: 1mm;
+}
+.facit-section ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  columns: 2;
+  column-gap: 6mm;
+  font-size: 0.9em;
+}
+.facit-grid.n1 .facit-section ol {
+  columns: 3;
+}
+.facit-section li {
+  break-inside: avoid;
+  padding: 0.4mm 0;
+}
+.facit-num {
+  font-size: 0.8em;
+  color: var(--p-soft);
+}
+
+/* ---------- Utskrift ---------- */
+@page {
+  size: A4 portrait;
+  margin: 11mm 12mm;
+}
+@media print {
+  html,
+  body,
+  .app {
+    background: #fff !important;
+  }
+  .app {
+    padding: 0 !important;
+    min-height: 0;
+  }
+  .page {
+    animation: none !important;
+    padding-top: 0 !important;
+  }
+  .worksheet-page .no-print,
+  .worksheet-page + .toast {
+    display: none !important;
+  }
+  .ws-layout {
+    display: block;
+    max-width: none;
+  }
+  .paper-stack {
+    zoom: 1 !important;
+  }
+  .paper {
+    display: block;
+    width: auto;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  .paper > .ws-foot {
+    margin-top: 8mm;
+  }
+  .paper + .paper {
+    break-before: page;
+    page-break-before: always;
+  }
+}
+
+/* Ingångar till arbetsbladen */
+.print-cta {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  text-decoration: none;
+  background: var(--coral-soft);
+  border: 3px solid var(--coral);
+}
+.print-cta-art {
+  width: 64px;
+  height: 64px;
+  flex: none;
+}
+.print-cta b {
+  display: block;
+  font-size: 23px;
+  font-weight: 900;
+}
+.print-cta span span {
+  color: var(--ink-soft);
+}
+.home-school-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Finputs efter provutskrift */
+.ws-option {
+  white-space: nowrap;
+}
+.has-visual .ws-options:not(.long) {
+  grid-template-columns: minmax(0, max-content);
+}
+.ws-pics {
+  flex-wrap: nowrap;
+}
+.ws-pic {
+  flex: 1 1 0;
+  max-width: 24mm;
+  min-width: 0;
+}
+.ws-pic-img,
+.paper.big .ws-pic-img,
+.ws-pics.n6 .ws-pic-img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+.paper.big .ws-pic {
+  max-width: 27mm;
+}
+.ws-visual.v-count {
+  width: 44mm;
+  height: 44mm;
+}

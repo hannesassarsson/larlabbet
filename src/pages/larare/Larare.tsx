@@ -18,6 +18,7 @@ import { parseWordList } from '../../curriculum/engelska';
 import { GRADES, gradeLong, type Grade } from '../../curriculum/types';
 import { getActivity } from '../../curriculum';
 import { Link, useRouter } from '../../lib/router';
+import { openWorksheet } from '../Arbetsblad';
 import { AuthForm, AVATARS, Avatar, Empty, ErrorBox, errorText, formatDue, Loading, PortalShell } from '../skola/ui';
 
 const GRADE_OPTIONS = GRADES.map((g) => ({ value: g, label: g === 0 ? 'F' : `Åk ${g}` }));
@@ -189,7 +190,7 @@ function Klass({ backend, classId, tab }: { backend: Backend; classId: string; t
       </nav>
 
       {tab === 'elever' && <StudentsTab backend={backend} cls={cls} students={students} codes={codes} reload={data.reload} />}
-      {tab === 'uppdrag' && <AssignmentsTab backend={backend} cls={cls} students={students} assignments={assignments} reload={data.reload} />}
+      {tab === 'uppdrag' && <AssignmentsTab backend={backend} cls={cls} students={students} assignments={assignments} wordlists={wordlists} reload={data.reload} />}
       {tab === 'glosor' && <WordListsTab backend={backend} cls={cls} lists={wordlists} reload={data.reload} />}
       {tab === 'resultat' && <ResultsTab students={students} assignments={assignments} />}
 
@@ -398,12 +399,40 @@ function StudentsTab({ backend, cls, students, codes, reload }: { backend: Backe
 
 /* ---------- Uppdrag ---------- */
 
-function AssignmentsTab({ backend, cls, students, assignments, reload }: { backend: Backend; cls: ClassRoom; students: Student[]; assignments: Assignment[]; reload: () => void }) {
+function AssignmentsTab({
+  backend,
+  cls,
+  students,
+  assignments,
+  wordlists,
+  reload,
+}: {
+  backend: Backend;
+  cls: ClassRoom;
+  students: Student[];
+  assignments: Assignment[];
+  wordlists: WordListDoc[];
+  reload: () => void;
+}) {
   const [remove, setRemove] = useState<Assignment | null>(null);
+  const { navigate } = useRouter();
+  const printIt = (a: Assignment) => {
+    const list = wordlists.find((w) => a.items.some((it) => it.wordListId === w.id));
+    openWorksheet(
+      {
+        title: a.title,
+        grade: cls.grade,
+        big: cls.grade <= 1,
+        sections: a.items.filter((it) => getActivity(it.activityId)?.id !== 'ma-monster').map((it) => ({ activityId: it.activityId, level: it.level, count: it.count })),
+        words: list ? list.pairs.map((p) => `${p.sv} – ${p.en}`).join('\n') : '',
+      },
+      navigate
+    );
+  };
   return (
     <section className="tab-panel">
       <div className="panel-head">
-        <p className="muted">Ett uppdrag är en eller flera övningar som klassen ska göra, gärna med ett slutdatum.</p>
+        <p className="muted">Ett uppdrag är en eller flera övningar som klassen ska göra, gärna med ett slutdatum. Varje uppdrag går också att skriva ut som arbetsblad.</p>
         <Link to={`/larare/klass/${cls.id}/uppdrag/nytt`} className="btn">
           Nytt uppdrag
         </Link>
@@ -437,6 +466,9 @@ function AssignmentsTab({ backend, cls, students, assignments, reload }: { backe
                     {done} av {students.length} klara
                   </small>
                   <div className="row-actions">
+                    <button className="btn btn-soft btn-small" onClick={() => printIt(a)}>
+                      Skriv ut
+                    </button>
                     <Link to={`/larare/klass/${cls.id}/uppdrag/${a.id}`} className="btn btn-soft btn-small">
                       Ändra
                     </Link>

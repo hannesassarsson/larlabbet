@@ -259,8 +259,8 @@ export function glosQuestions(list: WordList, mode: string, count: number, rng?:
     if (mode === 'stava' && spellable) {
       return { kind: 'spell', prompt: `Hur stavas ”${p.sv}” på engelska?`, visual, answer: p.en.toLowerCase(), extra: Math.min(2, Math.floor(p.en.length / 3)) };
     }
-    if (mode === 'en-sv') return mc(`Vad betyder ”${p.en}”?`, p.sv, others(p, 'sv'), rng, { visual, explain: `${p.en} = ${p.sv}` });
-    return mc(`Vad heter ”${p.sv}” på engelska?`, p.en, others(p, 'en'), rng, { visual, explain: `${p.sv} = ${p.en}` });
+    if (mode === 'en-sv') return { ...mc(`Vad betyder ”${p.en}”?`, p.sv, others(p, 'sv'), rng, { visual, explain: `${p.en} = ${p.sv}` }), cue: p.en };
+    return { ...mc(`Vad heter ”${p.sv}” på engelska?`, p.en, others(p, 'en'), rng, { visual, explain: `${p.sv} = ${p.en}` }), cue: p.sv };
   });
 }
 

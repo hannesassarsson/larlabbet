@@ -43,6 +43,21 @@ export default function Skola() {
           </Link>
         ))}
       </div>
+      <Link to="/arbetsblad" className="card print-cta">
+        <span className="print-cta-art" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <rect x="12" y="6" width="40" height="52" rx="4" fill="#fff" stroke="#3B2F5C" strokeWidth="3" />
+            <path d="M20 18h24M20 26h18M20 34h24M20 42h12" stroke="#3B2F5C" strokeWidth="3" strokeLinecap="round" />
+            <circle cx="44" cy="44" r="9" fill="#FF8A5B" />
+            <path d="M40 44l3 3 5-6" stroke="#fff" strokeWidth="2.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+        <span>
+          <b>Arbetsblad att skriva ut</b>
+          <span>Välj årskurs och övningar – få ett färdigt papper med facit. Inget konto behövs.</span>
+        </span>
+      </Link>
+
       <section className="card info-box school-info">
         <h2>Byggt för skolan</h2>
         <ul>

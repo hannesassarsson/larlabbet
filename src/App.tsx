@@ -16,6 +16,7 @@ import { KlassPage, KortPage, LarareHome } from './pages/larare/Larare';
 import { UppdragEditorPage } from './pages/larare/UppdragEditor';
 import { OvaActivity, OvaLibrary } from './pages/Ova';
 import Skola from './pages/skola/Skola';
+import Arbetsblad from './pages/Arbetsblad';
 import type { Grade, SubjectId } from './curriculum/types';
 import { onUpdateAvailable, applyUpdate } from './lib/sw';
 import Hjalp from './pages/Hjalp';
@@ -53,6 +54,7 @@ const TITLES: [string, string][] = [
   ['/larare', 'Lärare'],
   ['/foralder', 'Förälder'],
   ['/ova', 'Öva ämnen'],
+  ['/arbetsblad', 'Arbetsblad'],
   ['/in', 'Elev'],
 ];
 
@@ -88,6 +90,8 @@ function Routes() {
   if ((m = match(path, '/larare/klass/:cid/:tab'))) return <KlassPage classId={m.cid} tab={m.tab} />;
   if ((m = match(path, '/larare/klass/:cid'))) return <KlassPage classId={m.cid} />;
   if (path === '/foralder') return <ForalderHome />;
+
+  if (path === '/arbetsblad') return <Arbetsblad />;
 
   // Övningar
   if (path === '/ova') return <OvaLibrary />;

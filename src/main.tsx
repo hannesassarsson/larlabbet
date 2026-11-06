@@ -6,6 +6,7 @@ import { registerServiceWorker } from './lib/sw';
 import './styles/global.css';
 import './styles/app.css';
 import './styles/school.css';
+import './styles/print.css';
 
 installAudioUnlock();
 registerServiceWorker();

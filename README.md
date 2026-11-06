@@ -23,6 +23,20 @@ Engelska börjar i årskurs 1 eftersom kursplanen inte omfattar förskoleklass.
 Skolverkets förslag ska lämnas senast 14 maj 2027. Övningarna är därför märkta med område i stället för att byggas
 in i en fast struktur – när de nya kursplanerna kommer räcker det att ändra märkningen i `src/curriculum/`.
 
+## Arbetsblad att skriva ut (`/arbetsblad`)
+
+För lärare och föräldrar som vill ha papper. Inget konto behövs.
+
+1. Välj årskurs (och gärna ämne) och tryck **Föreslå ett blad** – eller lägg till övningar själv.
+2. Justera nivå och antal uppgifter. Förhandsvisningen i A4 uppdateras direkt.
+3. Tryck **Skriv ut** (eller välj ”Spara som PDF” i utskriftsrutan).
+
+- Räknetal blir skrivuppgifter med svarslinje, glosor blir glosförhör, bildfrågor ringas in.
+- **Facit** på egen sida. **Varianter A–D** ger olika frågor till bänkgrannar, var och en med eget facit.
+- Varje blad har ett **bladnummer**. Samma nummer ger exakt samma frågor, så bladet kan skrivas ut igen.
+- Blad kan sparas på enheten. Lärare kan skriva ut ett uppdrag direkt från klassens uppdragslista.
+- Utskriften är testad genom att skriva ut till PDF i Chrome. Safari på iPad är inte testad.
+
 ## Skolan: roller och behörigheter
 
 | Roll | Inloggning | Ser |

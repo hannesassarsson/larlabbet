@@ -2,6 +2,9 @@ import { ENGELSKA_ACTIVITIES } from './engelska';
 import { MATH_ACTIVITIES } from './matematik';
 import { SO_ACTIVITIES } from './so';
 import { SVENSKA_ACTIVITIES } from './svenska';
+import { PICTURES } from '../components/pictures';
+import { buildRound, displayLetter, type Level as LetterLevel } from '../games/bokstavsjakten/logic';
+import { mc } from './build';
 import type { Activity, Grade, SubjectId } from './types';
 
 /** Fristående spel som också passar i kursplanen och kan ges som uppdrag. */
@@ -21,7 +24,17 @@ const GAME_ACTIVITIES: Activity[] = [
       { value: 'svar', label: 'Svår', hint: '6 bilder' },
     ],
     defaultLevel: 'latt',
-    generate: () => [],
+    // Används på arbetsblad. På skärmen spelas Bokstavsjakten i sitt eget spel.
+    generate: (level = 'latt', count, rng) =>
+      buildRound(level as LetterLevel, rng, count).map((q) =>
+        mc(
+          `Vilken bild börjar på ${displayLetter(q.letter, level as LetterLevel)}?`,
+          { label: PICTURES[q.answer].word, visual: { t: 'pic', id: q.answer }, hideLabel: true },
+          q.options.filter((o) => o !== q.answer).map((o) => ({ label: PICTURES[o].word, visual: { t: 'pic', id: o } as const, hideLabel: true })),
+          rng,
+          { max: q.options.length }
+        )
+      ),
   },
   {
     id: 'ma-monster',

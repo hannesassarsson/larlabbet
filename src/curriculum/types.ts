@@ -48,6 +48,8 @@ export interface ChoiceQuestion {
   options: ChoiceOption[];
   answer: number;
   explain?: string;
+  /** Kort form för papper, t.ex. bara det svenska ordet i ett glosförhör. */
+  cue?: string;
 }
 
 export interface OrderQuestion {

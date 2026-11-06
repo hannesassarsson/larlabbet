@@ -162,9 +162,14 @@ export default function Home() {
           <h2 id="school-title" className="section-title">
             Skolämnen F–6
           </h2>
-          <Link to="/skola" className="btn btn-soft">
-            Logga in som elev, lärare eller förälder
-          </Link>
+          <div className="home-school-links">
+            <Link to="/arbetsblad" className="btn btn-soft">
+              Arbetsblad att skriva ut
+            </Link>
+            <Link to="/skola" className="btn btn-soft">
+              Logga in som elev, lärare eller förälder
+            </Link>
+          </div>
         </div>
         <div className="subject-grid">
           {SUBJECTS.map((sub) => (
