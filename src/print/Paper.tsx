@@ -169,8 +169,8 @@ export function SheetPaper({ sheet, config, title, className }: { sheet: PrintSh
     <article className={`paper${config.big ? ' big' : ''}${className ? ' ' + className : ''}`} aria-label={`Arbetsblad ${sheet.variant}`}>
       <header className="ws-head">
         <div className="ws-brand">
-          <LogoMark size={34} />
-          <span>Leklandet</span>
+          <LogoMark size={34} mode="lar" />
+          <span>Lärlabbet</span>
         </div>
         <div className="ws-title">
           <h1>{title}</h1>
@@ -194,7 +194,7 @@ export function SheetPaper({ sheet, config, title, className }: { sheet: PrintSh
       ))}
       <footer className="ws-foot">
         <span>Bladnummer {sheet.number}</span>
-        <span>leklandet · arbetsblad</span>
+        <span>lärlabbet · arbetsblad</span>
       </footer>
     </article>
   );
@@ -205,8 +205,8 @@ export function FacitPaper({ sheets, config, title }: { sheets: PrintSheet[]; co
     <article className="paper facit" aria-label="Facit">
       <header className="ws-head">
         <div className="ws-brand">
-          <LogoMark size={34} />
-          <span>Leklandet</span>
+          <LogoMark size={34} mode="lar" />
+          <span>Lärlabbet</span>
         </div>
         <div className="ws-title">
           <h1>Facit: {title}</h1>

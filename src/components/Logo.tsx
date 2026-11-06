@@ -1,5 +1,7 @@
-/** Leklandets logotyp: en glad sol-boll som tittar fram bakom en grön kulle. */
-export function LogoMark({ size = 56 }: { size?: number }) {
+import { BRAND, useMode, type Mode } from '../lib/mode';
+
+/** Leklabbets märke: en glad sol som tittar fram bakom en grön kulle. */
+export function LekMark({ size = 56 }: { size?: number }) {
   return (
     <svg viewBox="0 0 120 120" width={size} height={size} aria-hidden="true">
       <rect x="4" y="4" width="112" height="112" rx="32" fill="#FF8A5B" />
@@ -15,12 +17,37 @@ export function LogoMark({ size = 56 }: { size?: number }) {
   );
 }
 
-export function Logo() {
+/** Lärlabbets märke: en kolv med vätska och bubblor på mörkblå botten. */
+export function LarMark({ size = 56 }: { size?: number }) {
   return (
-    <span className="logo">
-      <LogoMark size={52} />
+    <svg viewBox="0 0 120 120" width={size} height={size} aria-hidden="true">
+      <rect x="4" y="4" width="112" height="112" rx="28" fill="#1D2B4F" />
+      <path d="M47 24h26M51 24v24L30 84a8 8 0 0 0 7 12h46a8 8 0 0 0 7-12L69 48V24" fill="none" stroke="#fff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M38 72h44l8 12a6 6 0 0 1-5 9H35a6 6 0 0 1-5-9z" fill="#2EC4B6" />
+      <circle cx="54" cy="80" r="3.5" fill="#fff" opacity=".85" />
+      <circle cx="64" cy="64" r="3" fill="#fff" opacity=".7" />
+      <circle cx="58" cy="54" r="2.2" fill="#fff" opacity=".6" />
+      <path d="M86 26l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#FF8A5B" />
+    </svg>
+  );
+}
+
+/** Behålls för äldre anrop: följer aktuellt läge. */
+export function LogoMark({ size = 56, mode }: { size?: number; mode?: Mode }) {
+  const m = useMode();
+  return (mode ?? m) === 'lek' ? <LekMark size={size} /> : <LarMark size={size} />;
+}
+
+export function Logo({ mode }: { mode?: Mode }) {
+  const current = useMode();
+  const m = mode ?? current;
+  const b = BRAND[m];
+  return (
+    <span className={`logo logo-${m}`}>
+      <LogoMark size={52} mode={m} />
       <span className="logo-word">
-        Lek<span>landet</span>
+        {b.first}
+        <span>{b.rest}</span>
       </span>
     </span>
   );

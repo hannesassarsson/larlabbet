@@ -1,0 +1,676 @@
+/* ================= Lärlabbet: skolmässigt utseende för årskurs 4–6 =================
+   Samma komponenter som Leklabbet, men lugnare: neutral grund, en tydlig accent,
+   rakare former, platta knappar och ett vanligt (inte rundat) typsnitt. */
+html[data-mode='lar'] {
+  --bg: #f4f5f1;
+  --bg-deep: #e9ebe4;
+  --surface: #ffffff;
+  --ink: #1d2433;
+  --ink-soft: #586173;
+  --line: #dfe2e7;
+
+  --accent: #1d2b4f;
+  --accent-2: #0f7c80;
+  --accent-soft: #e2f1f1;
+
+  --sun: #f3c54b;
+  --sun-soft: #fbf1d3;
+  --good: #1f7a46;
+  --good-soft: #e1f2e7;
+  --oops: #b3382c;
+  --oops-soft: #f9e3e0;
+
+  --radius-s: 10px;
+  --radius: 14px;
+  --radius-l: 18px;
+  --shadow-s: 0 1px 2px rgba(29, 36, 51, 0.06);
+  --shadow: 0 1px 2px rgba(29, 36, 51, 0.06), 0 6px 18px rgba(29, 36, 51, 0.06);
+  --shadow-press: 0 1px 1px rgba(29, 36, 51, 0.08);
+
+  --font: -apple-system, 'SF Pro Text', 'Segoe UI', system-ui, Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --tap: 56px;
+  background: var(--bg);
+}
+
+[data-mode='lar'] body {
+  font-size: 17px;
+  line-height: 1.5;
+}
+[data-mode='lar'] h1,
+[data-mode='lar'] h2,
+[data-mode='lar'] h3 {
+  letter-spacing: -0.015em;
+}
+[data-mode='lar'] :is(h1, h2) {
+  font-weight: 800 !important;
+}
+[data-mode='lar'] :focus-visible {
+  outline-color: var(--accent-2);
+}
+
+/* Knappar: platta, inga tjocka "leksaksskuggor". */
+[data-mode='lar'] .btn {
+  border-radius: 12px;
+  background: var(--accent);
+  box-shadow: none;
+  font-weight: 700;
+  font-size: 18px;
+}
+[data-mode='lar'] .btn:active {
+  transform: none;
+  box-shadow: none;
+  filter: brightness(0.92);
+}
+[data-mode='lar'] .btn-soft {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1.5px solid var(--line);
+}
+[data-mode='lar'] .btn-big {
+  min-height: 64px;
+  font-size: 20px;
+}
+[data-mode='lar'] .btn-danger {
+  background: var(--oops);
+}
+[data-mode='lar'] .icon-btn {
+  border-radius: 12px;
+  border: 1.5px solid var(--line);
+  box-shadow: none;
+}
+[data-mode='lar'] .icon-btn:active {
+  transform: none;
+  background: var(--bg-deep);
+}
+[data-mode='lar'] .card {
+  border: 1px solid var(--line);
+}
+[data-mode='lar'] .chip {
+  border-radius: 10px;
+  border-width: 1.5px;
+  border-color: var(--line);
+  box-shadow: none;
+  font-weight: 600;
+}
+[data-mode='lar'] .chip[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+[data-mode='lar'] .choice {
+  border-radius: 12px;
+  border-width: 1.5px;
+  font-weight: 700;
+}
+[data-mode='lar'] .choice[aria-checked='true'] {
+  border-color: var(--accent);
+  background: var(--accent-soft) !important;
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+[data-mode='lar'] .field input,
+[data-mode='lar'] .field textarea,
+[data-mode='lar'] .field select {
+  border-radius: 10px;
+  border-width: 1.5px;
+}
+[data-mode='lar'] .tab {
+  border-radius: 10px;
+  box-shadow: none;
+  border: 1.5px solid var(--line);
+}
+[data-mode='lar'] .tab[aria-current='page'] {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+[data-mode='lar'] .logo-word span {
+  color: var(--accent-2);
+}
+[data-mode='lar'] .hero-kicker {
+  color: var(--accent-2);
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+[data-mode='lar'] .demo-banner {
+  border-style: solid;
+  border-width: 1px;
+}
+
+/* Övningar: rakare svarsknappar och ingen konfetti. */
+[data-mode='lar'] .run-option,
+[data-mode='lar'] .num-option,
+[data-mode='lar'] .pattern-option,
+[data-mode='lar'] .pic-option {
+  border-radius: 14px;
+  border: 2px solid var(--line);
+  box-shadow: none;
+}
+[data-mode='lar'] .run-option:active,
+[data-mode='lar'] .num-option:active {
+  transform: none;
+  background: var(--bg-deep);
+  box-shadow: none;
+}
+[data-mode='lar'] .run-option-label {
+  font-weight: 600;
+}
+[data-mode='lar'] .run-visual,
+[data-mode='lar'] .run-detail,
+[data-mode='lar'] .math-card,
+[data-mode='lar'] .quiz-card {
+  border-radius: 14px;
+  box-shadow: none;
+  border: 1px solid var(--line);
+}
+[data-mode='lar'] .run-intro-card {
+  border-top-width: 6px;
+}
+[data-mode='lar'] .tile {
+  border-radius: 10px;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  box-shadow: none;
+}
+[data-mode='lar'] .slot {
+  border-radius: 10px;
+}
+[data-mode='lar'] .progress {
+  height: 8px;
+}
+[data-mode='lar'] .confetti,
+[data-mode='lar'] .pop {
+  animation: none;
+}
+[data-mode='lar'] .confetti {
+  display: none;
+}
+[data-mode='lar'] .feedback {
+  border-radius: 10px;
+  font-weight: 600;
+}
+[data-mode='lar'] .subject-pill {
+  border-radius: 8px;
+}
+
+/* Resultat och genomgång efter en övning */
+.lar-result {
+  max-width: 820px;
+  margin: 0 auto;
+  display: grid;
+  gap: 18px;
+  padding-bottom: 30px;
+}
+.lar-result-card {
+  padding: 28px 30px;
+  display: grid;
+  gap: 16px;
+}
+.lar-result-card h1 {
+  font-size: clamp(28px, 4vw, 38px);
+}
+.lar-score {
+  display: grid;
+  gap: 10px;
+}
+.lar-score-big {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.lar-score-big b {
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.lar-score-big span {
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.lar-meter {
+  height: 12px;
+  border-radius: 6px;
+  background: var(--bg-deep);
+  overflow: hidden;
+}
+.lar-meter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+}
+.lar-meter .good {
+  background: var(--good);
+}
+.lar-meter .mid {
+  background: var(--sun);
+}
+.lar-meter .low {
+  background: var(--oops);
+}
+.lar-verdict {
+  font-weight: 700;
+  font-size: 19px;
+}
+.lar-result-actions {
+  display: grid;
+  gap: 10px;
+}
+.lar-review {
+  padding: 24px 28px;
+}
+.lar-review h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+.lar-review ol {
+  margin: 0;
+  padding-left: 22px;
+  display: grid;
+  gap: 14px;
+}
+.lar-review li {
+  padding-left: 4px;
+}
+.review-q {
+  font-weight: 700;
+}
+.review-detail {
+  color: var(--ink-soft);
+}
+.review-a b {
+  color: var(--good);
+}
+.review-explain {
+  color: var(--ink-soft);
+  font-size: 15px;
+}
+
+/* ================= Startval ================= */
+.start-page {
+  max-width: 1000px;
+  padding-bottom: 40px;
+}
+.start-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 8px 0 26px;
+}
+.start-head h1 {
+  font-size: clamp(32px, 5vw, 44px);
+}
+.start-head p {
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.doors {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+@media (max-width: 760px) {
+  .doors {
+    grid-template-columns: 1fr;
+  }
+}
+.door {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 28px;
+  text-align: left;
+  border: 0;
+  min-height: 340px;
+  transition: transform 0.15s;
+}
+.door:active {
+  transform: scale(0.985);
+}
+.door-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.door-text b {
+  font-size: 34px;
+  line-height: 1.1;
+}
+.door-grades {
+  font-weight: 800;
+}
+.door-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 0 24px;
+  font-weight: 800;
+  font-size: 19px;
+}
+.door-go svg {
+  width: 22px;
+  height: 22px;
+}
+.door-lek {
+  background: #fff3df;
+  color: #3b2f5c;
+  border-radius: 32px;
+  font-family: ui-rounded, 'SF Pro Rounded', 'Nunito', system-ui, sans-serif;
+  box-shadow: 0 4px 0 #f1d9b5, 0 14px 30px rgba(59, 47, 92, 0.1);
+}
+.door-lek .door-text b {
+  font-weight: 900;
+}
+.door-lek .door-grades {
+  color: #e2643a;
+}
+.door-lek .door-go {
+  border-radius: 999px;
+  background: #ff8a5b;
+  color: #3b2f5c;
+  box-shadow: 0 4px 0 #d9693d;
+}
+.door-lar {
+  background: #1d2b4f;
+  color: #fff;
+  border-radius: 18px;
+  font-family: -apple-system, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+  box-shadow: 0 14px 30px rgba(29, 36, 51, 0.18);
+}
+.door-lar .door-text b {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.door-lar .door-grades {
+  color: #7fe0d8;
+}
+.door-lar .door-text span:last-child {
+  color: #d3d9e6;
+}
+.door-lar .door-go {
+  border-radius: 12px;
+  background: #fff;
+  color: #1d2b4f;
+}
+.start-adults {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 18px;
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1.5px solid var(--line);
+  font-weight: 700;
+}
+.start-adults span {
+  color: var(--ink-soft);
+}
+.start-adults a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+}
+
+/* ================= Lärlabbet: start och ämnen ================= */
+.lar-page {
+  max-width: 1080px;
+  padding-bottom: 40px;
+}
+.lar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  flex-wrap: wrap;
+  padding: 4px 0 18px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 24px;
+}
+.lar-home-link {
+  text-decoration: none;
+}
+.lar-header .logo-word {
+  font-size: 26px;
+  font-weight: 800;
+}
+.lar-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.lar-nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  text-decoration: none;
+}
+.lar-nav-link:active {
+  background: var(--bg-deep);
+}
+.lar-nav-link.subtle {
+  color: var(--ink-soft);
+}
+.lar-hero {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 18px;
+  margin-bottom: 8px;
+}
+.lar-hero h1 {
+  font-size: clamp(32px, 4.6vw, 46px);
+  margin: 4px 0 8px;
+}
+.lar-lead {
+  color: var(--ink-soft);
+  max-width: 58ch;
+  font-size: 18px;
+}
+.lar-grade {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--bg-deep);
+  gap: 4px;
+}
+.lar-grade button {
+  min-height: 48px;
+  min-width: 72px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  font-weight: 700;
+}
+.lar-grade button[aria-checked='true'] {
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.lar-section {
+  margin-top: 30px;
+}
+.lar-section > h2 {
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+.lar-subjects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+@media (max-width: 640px) {
+  .lar-subjects {
+    grid-template-columns: 1fr;
+  }
+}
+.lar-subject {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px 22px;
+  text-decoration: none;
+  border-left: 6px solid var(--subject) !important;
+}
+.lar-subject-name {
+  font-size: 22px;
+  font-weight: 800;
+}
+.lar-subject-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--bg-deep);
+  overflow: hidden;
+  margin-top: 6px;
+}
+.lar-subject-bar span {
+  display: block;
+  height: 100%;
+  background: var(--good);
+}
+.lar-subject-stats {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.lar-rows {
+  display: grid;
+  gap: 8px;
+}
+.lar-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 72px;
+  padding: 12px 16px;
+  text-decoration: none;
+  border-left: 5px solid var(--subject) !important;
+}
+.lar-row:active {
+  background: var(--bg-deep);
+}
+.lar-row-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.lar-row-text b {
+  font-size: 18px;
+}
+.lar-row-text small {
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+.lar-row-grade {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.lar-row-go {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  flex: none;
+}
+.lar-row-go svg {
+  width: 18px;
+  height: 18px;
+}
+.mastery {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+  background: var(--bg-deep);
+  color: var(--ink-soft);
+}
+.mastery.m-klar {
+  background: var(--good-soft);
+  color: var(--good);
+}
+.mastery.m-nastan {
+  background: var(--sun-soft);
+  color: #7a5a00;
+}
+.mastery.m-ova {
+  background: var(--oops-soft);
+  color: var(--oops);
+}
+@media (max-width: 560px) {
+  .lar-row {
+    flex-wrap: wrap;
+  }
+  .lar-row-text {
+    flex-basis: calc(100% - 60px);
+  }
+  .lar-row-grade {
+    display: none;
+  }
+}
+.lar-subject-head {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.lar-subject-head h1 {
+  font-size: clamp(30px, 4.4vw, 42px);
+  border-left: 6px solid var(--subject);
+  padding-left: 14px;
+}
+.lar-area {
+  font-size: 18px !important;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700 !important;
+}
+.lar-tools {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 900px) {
+  .lar-tools {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.lar-tool {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 18px;
+  text-decoration: none;
+}
+.lar-tool b {
+  font-size: 18px;
+}
+.lar-tool span {
+  color: var(--ink-soft);
+  font-size: 15px;
+}
+[data-mode='lar'] .item-go {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 10px;
+}
+[data-mode='lar'] .item-row {
+  border-radius: 12px;
+  border-width: 1.5px;
+}
+[data-mode='lar'] .progress-pill {
+  border-radius: 8px;
+}

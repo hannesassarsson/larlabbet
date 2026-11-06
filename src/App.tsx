@@ -1,4 +1,4 @@
-import { useEffect, useState, type ComponentType } from 'react';
+import { useEffect, useLayoutEffect, useState, type ComponentType } from 'react';
 import { IconBack } from './components/Icons';
 import { LogoMark } from './components/Logo';
 import BokstavsjaktenGame from './games/bokstavsjakten/BokstavsjaktenGame';
@@ -17,6 +17,8 @@ import { UppdragEditorPage } from './pages/larare/UppdragEditor';
 import { OvaActivity, OvaLibrary } from './pages/Ova';
 import Skola from './pages/skola/Skola';
 import Arbetsblad from './pages/Arbetsblad';
+import { LarActivity, LarHome, LarSubject, StartPage } from './pages/lar/Lar';
+import { APP_NAME, BRAND, getLastPart, getMode, modeForPath, setMode } from './lib/mode';
 import type { Grade, SubjectId } from './curriculum/types';
 import { onUpdateAvailable, applyUpdate } from './lib/sw';
 import Hjalp from './pages/Hjalp';
@@ -46,7 +48,20 @@ function NotFound() {
   );
 }
 
+/** Startadressen öppnar den del man senast använde, annars valet mellan delarna. */
+function RootRedirect() {
+  const { navigate } = useRouter();
+  const last = getLastPart();
+  useEffect(() => {
+    if (last) navigate(last === 'lek' ? '/lek' : '/lar', { replace: true });
+  }, [last, navigate]);
+  return last ? null : <StartPage />;
+}
+
 const TITLES: [string, string][] = [
+  ['/lek', ''],
+  ['/lar/amne', 'Ämne'],
+  ['/lar/ova', 'Övning'],
   ['/installera', 'Lägg till på iPad'],
   ['/hjalp', 'För vuxna'],
   ['/skola', 'Skolan'],
@@ -63,12 +78,27 @@ function Routes() {
   const gameMatch = path.match(/^\/spel\/([a-z]+)$/);
   const meta = gameMatch ? getGame(gameMatch[1]) : undefined;
 
+  // Utseende: Leklabbet (lek) eller Lärlabbet (lar). Elevsidorna väljer själva efter klassens årskurs.
+  useLayoutEffect(() => {
+    if (path === '/elev' || path.startsWith('/elev/uppdrag')) return;
+    if (path === '/elev/logga-in' || path.startsWith('/in/')) setMode('lek');
+    else if (path === '/' || path === '/start') setMode(getLastPart() ?? 'lar');
+    else setMode(modeForPath(path));
+  }, [path]);
+
   useEffect(() => {
     const t = meta?.title ?? TITLES.find(([p]) => path === p || path.startsWith(p + '/'))?.[1];
-    document.title = path === '/' ? 'Leklandet – lek och lär' : t ? `${t} – Leklandet` : 'Leklandet';
+    const brand = path === '/' || path === '/start' ? APP_NAME : BRAND[getMode()].name;
+    document.title = t ? `${t} – ${brand}` : brand;
   }, [path, meta]);
 
-  if (path === '/') return <Home />;
+  if (path === '/') return <RootRedirect />;
+  if (path === '/start') return <StartPage />;
+  if (path === '/lek') return <Home />;
+  if (path === '/lar') return <LarHome />;
+  let lm = match(path, '/lar/amne/:id');
+  if (lm) return <LarSubject key={lm.id} id={lm.id} />;
+  if ((lm = match(path, '/lar/ova/:id'))) return <LarActivity key={lm.id} id={lm.id} />;
   if (path === '/installera') return <Installera />;
   if (path === '/hjalp') return <Hjalp />;
   if (meta) {
@@ -107,7 +137,7 @@ function UpdateToast() {
   if (!show) return null;
   return (
     <div className="toast" role="status">
-      <span>En ny version av Leklandet finns.</span>
+      <span>En ny version av Lärlabbet finns.</span>
       <button className="btn" onClick={applyUpdate}>
         Uppdatera
       </button>

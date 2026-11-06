@@ -107,15 +107,10 @@ export default function Home() {
   return (
     <div className="page home">
       <header className="home-header container">
-        <Logo />
+        <Logo mode="lek" />
         <nav className="home-nav" aria-label="Huvudmeny">
-          {!standalone && (
-            <Link to="/installera" className="btn btn-soft nav-install">
-              <IconAddSquare /> <span>Lägg till på iPad</span>
-            </Link>
-          )}
-          <Link to="/skola" className="btn btn-soft nav-install">
-            <span className="nav-school-dot" aria-hidden="true" /> <span>Skolan</span>
+          <Link to="/elev/logga-in" className="btn btn-soft nav-install">
+            <span className="nav-school-dot" aria-hidden="true" /> <span>Jag har en kod</span>
           </Link>
           <SoundToggle />
         </nav>
@@ -160,22 +155,14 @@ export default function Home() {
       <section className="container section" aria-labelledby="school-title">
         <div className="library-head">
           <h2 id="school-title" className="section-title">
-            Skolämnen F–6
+            Öva skolämnen
           </h2>
-          <div className="home-school-links">
-            <Link to="/arbetsblad" className="btn btn-soft">
-              Arbetsblad att skriva ut
-            </Link>
-            <Link to="/skola" className="btn btn-soft">
-              Logga in som elev, lärare eller förälder
-            </Link>
-          </div>
         </div>
         <div className="subject-grid">
           {SUBJECTS.map((sub) => (
             <Link key={sub.id} to={`/ova/amne/${sub.id}`} className="subject-card" style={{ ['--subject' as string]: sub.color, ['--subject-soft' as string]: sub.soft }}>
               <b>{sub.short}</b>
-              <span>{ACTIVITIES.filter((a) => a.subject === sub.id).length} övningar</span>
+              <span>{ACTIVITIES.filter((a) => a.subject === sub.id && !a.game && !a.needsWordList && a.grades[0] <= 3).length} övningar</span>
             </Link>
           ))}
         </div>
@@ -274,12 +261,18 @@ export default function Home() {
       </section>
 
       <footer className="container home-footer">
-        <Link to="/hjalp" className="footer-link">
-          <IconInfo /> För föräldrar och lärare
+        <Link to="/start" className="footer-link">
+          Lärlabbet för årskurs 4–6
+        </Link>
+        <Link to="/skola" className="footer-link">
+          <IconInfo /> För lärare och föräldrar
+        </Link>
+        <Link to="/arbetsblad" className="footer-link">
+          Arbetsblad att skriva ut
         </Link>
         {!standalone && (
           <Link to="/installera" className="footer-link">
-            <IconAddSquare /> Så lägger du till Leklandet på iPad
+            <IconAddSquare /> Lägg till på iPad
           </Link>
         )}
         <p className="footer-note">Ingen reklam och ingen spårning. Fri lek kräver inget konto och sparas bara på den här enheten.</p>

@@ -100,7 +100,7 @@ function Step4Art() {
         <LogoArt />
       </g>
       <rect x="140" y="92" width="92" height="22" rx="6" fill="#F2F0F7" />
-      <text x="148" y="107" fontSize="11" fontWeight="800" fill={INK} fontFamily="ui-rounded, system-ui">Leklandet</text>
+      <text x="148" y="107" fontSize="11" fontWeight="800" fill={INK} fontFamily="ui-rounded, system-ui">Lärlabbet</text>
       <rect x="140" y="122" width="70" height="8" rx="4" fill="#E9E6F2" />
     </IpadFrame>
   );
@@ -123,7 +123,7 @@ function Step5Art() {
           <LogoArt />
         </g>
       </g>
-      <text x="188" y="142" textAnchor="middle" fontSize="9" fontWeight="800" fill={INK} fontFamily="ui-rounded, system-ui">Leklandet</text>
+      <text x="188" y="142" textAnchor="middle" fontSize="9" fontWeight="800" fill={INK} fontFamily="ui-rounded, system-ui">Lärlabbet</text>
       <g transform="translate(176 150)">
         <path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11M11 10V4.5a1.5 1.5 0 0 1 3 0V11M14 10.5V6a1.5 1.5 0 0 1 3 0v7.5c0 4-2.5 7-6.5 7-2.6 0-4.2-1.3-5.6-3.4L3.6 14.6a1.5 1.5 0 0 1 2.4-1.8L8 15" fill="#fff" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" transform="scale(1.6)" />
       </g>
@@ -131,22 +131,20 @@ function Step5Art() {
   );
 }
 
-/** Samma motiv som appikonen. */
+/** Samma motiv som appikonen (Lärlabbets kolv). */
 function LogoArt() {
   return (
     <g>
-      <rect x="0" y="0" width="120" height="120" rx="30" fill="#FF8A5B" />
-      <circle cx="60" cy="56" r="30" fill="#FFD166" />
-      <circle cx="50" cy="52" r="5" fill={INK} />
-      <circle cx="70" cy="52" r="5" fill={INK} />
-      <path d="M49 64q11 9 22 0" stroke={INK} strokeWidth="5" fill="none" strokeLinecap="round" />
-      <path d="M0 90q28-20 56-6t64-4v10q0 30-30 30H30Q0 120 0 90z" fill="#7BD389" />
+      <rect x="0" y="0" width="120" height="120" rx="28" fill="#1D2B4F" />
+      <path d="M47 24h26M51 24v24L30 84a8 8 0 0 0 7 12h46a8 8 0 0 0 7-12L69 48V24" fill="none" stroke="#fff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M38 72h44l8 12a6 6 0 0 1-5 9H35a6 6 0 0 1-5-9z" fill="#2EC4B6" />
+      <path d="M86 26l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#FF8A5B" />
     </g>
   );
 }
 
 const STEPS = [
-  { title: 'Öppna Safari', text: 'Öppna Leklandet i webbläsaren Safari på din iPad.', Art: Step1Art },
+  { title: 'Öppna Safari', text: 'Öppna Lärlabbet i webbläsaren Safari på din iPad.', Art: Step1Art },
   {
     title: 'Tryck på Dela',
     text: 'Tryck på Dela-symbolen – fyrkanten med pilen uppåt. Den brukar finnas uppe till höger.',
@@ -159,8 +157,8 @@ const STEPS = [
     Art: Step3Art,
     symbol: <IconAddSquare />,
   },
-  { title: 'Bekräfta', text: 'Kontrollera att namnet är Leklandet och tryck på ”Lägg till”.', Art: Step4Art },
-  { title: 'Börja spela', text: 'Gå till hemskärmen och tryck på Leklandets ikon. Klart!', Art: Step5Art },
+  { title: 'Bekräfta', text: 'Kontrollera att namnet är Lärlabbet och tryck på ”Lägg till”.', Art: Step4Art },
+  { title: 'Börja spela', text: 'Gå till hemskärmen och tryck på Lärlabbets ikon. Klart!', Art: Step5Art },
 ];
 
 export default function Installera() {
@@ -173,7 +171,7 @@ export default function Installera() {
     notice = (
       <div className="notice notice-warn">
         <b>Det här är en förhandsvisning.</b>
-        <p>Här kan du prova spelen och se guiden. Själva installationen på hemskärmen och offlineläget fungerar först när Leklandet ligger på en egen webbadress.</p>
+        <p>Här kan du prova spelen och se guiden. Själva installationen på hemskärmen och offlineläget fungerar först när Lärlabbet ligger på en egen webbadress.</p>
       </div>
     );
   } else if (standalone) {
@@ -181,8 +179,8 @@ export default function Installera() {
       <div className="notice notice-good">
         <IconCheck />
         <div>
-          <b>Leklandet är redan installerat!</b>
-          <p>Du har öppnat Leklandet från hemskärmen. Det finns inget mer att göra.</p>
+          <b>Lärlabbet är redan installerat!</b>
+          <p>Du har öppnat Lärlabbet från hemskärmen. Det finns inget mer att göra.</p>
         </div>
       </div>
     );
@@ -190,7 +188,7 @@ export default function Installera() {
     notice = (
       <div className="notice notice-warn">
         <b>Det ser ut som att sidan är öppen inuti en annan app.</b>
-        <p>Öppna Leklandet i Safari först. Leta efter ”Öppna i Safari” eller kopiera adressen och klistra in den i Safari.</p>
+        <p>Öppna Lärlabbet i Safari först. Leta efter ”Öppna i Safari” eller kopiera adressen och klistra in den i Safari.</p>
       </div>
     );
   } else if (guess.browser === 'ios-other-browser') {
@@ -217,10 +215,10 @@ export default function Installera() {
         </button>
       </div>
       <header className="info-hero">
-        <LogoMark size={84} />
+        <LogoMark size={84} mode="lar" />
         <div>
-          <h1>Lägg till Leklandet på iPaden</h1>
-          <p>Då får Leklandet en egen ikon på hemskärmen och öppnas i helskärm – precis som en app. Det tar under en minut.</p>
+          <h1>Lägg till Lärlabbet på iPaden</h1>
+          <p>Då får Lärlabbet en egen ikon på hemskärmen och öppnas i helskärm – precis som en app. Det tar under en minut.</p>
         </div>
       </header>
 
@@ -262,7 +260,7 @@ export default function Installera() {
           <h2>Bra att veta</h2>
           <ul>
             <li>
-              <b>Inte via App Store.</b> Leklandet är en webbapp. Den läggs till direkt från Safari och kräver inget konto eller Apple-ID.
+              <b>Inte via App Store.</b> Lärlabbet är en webbapp. Den läggs till direkt från Safari och kräver inget konto eller Apple-ID.
             </li>
             <li>
               <b>Internet första gången.</b> Första gången behöver iPaden vara uppkopplad så att spelen kan laddas ned. Sedan går de att spela även utan internet.

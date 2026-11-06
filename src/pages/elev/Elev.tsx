@@ -8,6 +8,7 @@ import BokstavsjaktenGame from '../../games/bokstavsjakten/BokstavsjaktenGame';
 import MonsterGame from '../../games/monster/MonsterGame';
 import { getGame } from '../../games/registry';
 import { useRouter } from '../../lib/router';
+import { modeForGrade, setMode } from '../../lib/mode';
 import { ActivityRunner } from '../../play/ActivityRunner';
 import { Avatar, CodeForm, Empty, ErrorBox, formatDue, Loading, PortalShell } from '../skola/ui';
 
@@ -77,10 +78,13 @@ export function ElevHome() {
   const { navigate } = useRouter();
   const s = session?.role === 'student' ? session : null;
   const data = useStudentData(backend, s);
+  const grade = data.data?.cls?.grade;
 
   useEffect(() => {
     if (!loading && !s) navigate('/elev/logga-in', { replace: true });
   }, [loading, s, navigate]);
+  // F–3 ser Leklabbet, 4–6 ser Lärlabbet.
+  useEffect(() => setMode(grade !== undefined ? modeForGrade(grade) : 'lek'), [grade]);
 
   if (loading || !s || data.loading) return <Loading />;
   if (data.error || !data.data?.student) {
@@ -208,10 +212,12 @@ export function ElevUppgift({ assignmentId, item }: { assignmentId: string; item
   const s = session?.role === 'student' ? session : null;
   const data = useStudentData(backend, s);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const grade = data.data?.cls?.grade;
 
   useEffect(() => {
     if (!loading && !s) navigate('/elev/logga-in', { replace: true });
   }, [loading, s, navigate]);
+  useEffect(() => setMode(grade !== undefined ? modeForGrade(grade) : 'lek'), [grade]);
 
   if (loading || !s || data.loading) return <Loading />;
   const a = data.data?.assignments.find((x) => x.id === assignmentId);

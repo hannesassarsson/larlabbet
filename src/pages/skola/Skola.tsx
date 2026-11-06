@@ -22,7 +22,7 @@ export default function Skola() {
           <IconBack />
         </button>
         <div className="portal-title">
-          <p className="hero-kicker">Leklandet i skolan</p>
+          <p className="hero-kicker">Lärlabbet i skolan</p>
           <h1>Vem är du?</h1>
         </div>
       </header>

@@ -49,11 +49,12 @@ export default function Hjalp() {
       <header className="info-hero plain">
         <div>
           <p className="hero-kicker">För föräldrar och lärare</p>
-          <h1>Så fungerar Leklandet</h1>
+          <h1>Så fungerar Lärlabbet</h1>
           <p>
-            Leklandet är en samling lugna, pedagogiska spel för barn ungefär 5–10 år. Barnet väljer själv spel och
-            svårighetsgrad, och får positiv återkoppling längs vägen.
-          </p>
+            Lärlabbet har två delar. <b>Leklabbet</b> är för förskoleklass till årskurs 3: spel och lekfulla övningar med
+            bilder, ljud och stora knappar. <b>Lärlabbet</b> är för årskurs 4–6: övningar ordnade efter ämne och kursplanens
+            områden, med resultat och genomgång av det eleven missade. Eleverna med elevkod hamnar automatiskt i rätt del
+            utifrån klassens årskurs.</p>
         </div>
       </header>
 
@@ -129,7 +130,7 @@ export default function Hjalp() {
               <b>Offline</b>
               <p className="muted">
                 {HASH_MODE
-                  ? 'Förhandsvisning: offlineläget fungerar först när Leklandet ligger på en egen webbadress.'
+                  ? 'Förhandsvisning: offlineläget fungerar först när Lärlabbet ligger på en egen webbadress.'
                   : offline.ready
                   ? 'Spelen är nedladdade och fungerar utan internet.'
                   : 'Spelen laddas ned för offlinebruk när sidan öppnas via en säker adress (https).'}
@@ -144,7 +145,7 @@ export default function Hjalp() {
         <div className="card info-box install-cta">
           <div>
             <h2>Lägg till på hemskärmen</h2>
-            <p>Med en ikon på hemskärmen öppnas Leklandet i helskärm, utan adressfält – och barnet hittar tillbaka själv.</p>
+            <p>Med en ikon på hemskärmen öppnas Lärlabbet i helskärm, utan adressfält – och barnet hittar tillbaka själv.</p>
           </div>
           <Link to="/installera" className="btn btn-big">
             <IconAddSquare /> Visa guiden

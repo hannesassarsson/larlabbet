@@ -366,7 +366,7 @@ export default function Arbetsblad() {
       {printHelp && (
         <Overlay label="Utskrift" onClose={() => setPrintHelp(false)}>
           <h2>Utskrift fungerar i appen</h2>
-          <p>Det här är en förhandsvisning där webbläsaren inte får öppna utskriftsrutan. När Leklandet ligger på sin egen adress skriver knappen ut bladet direkt, eller sparar det som PDF.</p>
+          <p>Det här är en förhandsvisning där webbläsaren inte får öppna utskriftsrutan. När Lärlabbet ligger på sin egen adress skriver knappen ut bladet direkt, eller sparar det som PDF.</p>
           <button className="btn btn-big" onClick={() => setPrintHelp(false)}>
             Okej
           </button>

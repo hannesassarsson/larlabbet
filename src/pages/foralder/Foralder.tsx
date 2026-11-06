@@ -12,7 +12,7 @@ export function ForalderHome() {
   if (loading || !backend) return <Loading />;
   if (session?.role !== 'parent') {
     return (
-      <PortalShell title="För föräldrar" kicker="Leklandet i skolan" back="/skola" backend={backend} session={session}>
+      <PortalShell title="För föräldrar" kicker="Lärlabbet i skolan" back="/skola" backend={backend} session={session}>
         {session && <p className="notice notice-warn">Du är inloggad som {session.role === 'teacher' ? 'lärare' : 'elev'}. Logga ut först om du vill logga in som förälder.</p>}
         <div className="auth-layout">
           <AuthForm role="parent" backend={backend} />

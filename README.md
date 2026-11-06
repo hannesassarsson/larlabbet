@@ -1,6 +1,15 @@
-# Leklandet
+# Lärlabbet
 
-Svensk spelportal och skolplattform för förskoleklass till årskurs 6, byggd som installerbar webbapp (PWA) för iPad.
+Svensk plattform för lek och lärande, förskoleklass till årskurs 6, byggd som installerbar webbapp (PWA) för iPad.
+Appen heter **Lärlabbet** och har två delar som delar innehåll och motor men ser olika ut:
+
+| Del | Adress | För vem | Känsla |
+|---|---|---|---|
+| **Leklabbet** | `/lek` | F–3 | Lekfullt: bilder, figurer, stjärnor, ljud, stora knappar |
+| **Lärlabbet** | `/lar` | 4–6, lärare, föräldrar | Skolmässigt: ämnen och kursplanens områden, resultat i procent, genomgång av fel, framsteg per övning |
+
+`/` öppnar den del man senast valde, annars valet på `/start`. Elever som loggar in med kod hamnar i rätt del
+utifrån klassens årskurs. Lärar-, föräldra- och arbetsbladssidorna använder Lärlabbets utseende.
 
 - **Fri lek** – sju spel och ett övningsbibliotek. Inget konto, allt sparas lokalt.
 - **Skolan** – lärare skapar klasser och ger uppdrag ur kursplanen, elever loggar in med kod eller QR, föräldrar följer sitt barn med en föräldrakod. Data i Firebase (Authentication + Firestore).

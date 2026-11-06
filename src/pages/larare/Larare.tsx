@@ -35,7 +35,7 @@ function TeacherGate({ children, title = 'För lärare' }: { children: (b: Backe
   if (loading || !backend) return <Loading />;
   if (!teacher) {
     return (
-      <PortalShell title={title} kicker="Leklandet i skolan" back="/skola" backend={backend} session={session}>
+      <PortalShell title={title} kicker="Lärlabbet i skolan" back="/skola" backend={backend} session={session}>
         {session && session.role !== 'teacher' && (
           <p className="notice notice-warn">Du är inloggad som {session.role === 'parent' ? 'förälder' : 'elev'}. Logga ut först om du vill logga in som lärare.</p>
         )}
@@ -695,7 +695,7 @@ function Kort({ backend, classId }: { backend: Backend; classId: string }) {
       </div>
       <p className="no-print muted">
         {which === 'elev'
-          ? 'Klipp ut korten och ge varje elev sitt. QR-koden öppnar Leklandet och loggar in eleven direkt.'
+          ? 'Klipp ut korten och ge varje elev sitt. QR-koden öppnar Lärlabbet och loggar in eleven direkt.'
           : 'Skicka hem lappen. Föräldern skapar ett konto och skriver in koden för att se sitt barns uppdrag.'}
       </p>
       <div className="cards-sheet">
@@ -716,7 +716,7 @@ function Kort({ backend, classId }: { backend: Backend; classId: string }) {
                 <div>
                   <small>Min kod</small>
                   <span className="big-code">{formatCode(c.loginCode)}</span>
-                  <small>Leklandet → Elev</small>
+                  <small>Lärlabbet → Elev</small>
                 </div>
               </div>
             </div>
@@ -724,7 +724,7 @@ function Kort({ backend, classId }: { backend: Backend; classId: string }) {
             <div key={s.id} className="login-card parent-slip">
               <b>Till förälder till {s.alias}</b>
               <p>
-                Följ ditt barns uppdrag i Leklandet. Gå till <span className="url">{origin.replace(/^https?:\/\//, '')}/foralder</span>, skapa ett konto och skriv in föräldrakoden:
+                Följ ditt barns uppdrag i Lärlabbet. Gå till <span className="url">{origin.replace(/^https?:\/\//, '')}/foralder</span>, skapa ett konto och skriv in föräldrakoden:
               </p>
               <span className="big-code">{formatCode(c.parentCode)}</span>
               <small>Koden ger bara tillgång till {s.alias}s uppdrag och resultat i klassen {cls.name}.</small>

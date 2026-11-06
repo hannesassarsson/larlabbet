@@ -163,7 +163,7 @@ export function AuthForm({ role, backend }: { role: 'teacher' | 'parent'; backen
         <label className="check">
           <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
           <span>
-            Jag har läst <Link to="/hjalp">hur Leklandet hanterar uppgifter</Link>. Leklandet sparar mitt namn och min e-post för inloggningen.
+            Jag har läst <Link to="/hjalp">hur Lärlabbet hanterar uppgifter</Link>. Lärlabbet sparar mitt namn och min e-post för inloggningen.
           </span>
         </label>
       )}

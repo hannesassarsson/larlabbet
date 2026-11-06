@@ -7,6 +7,7 @@ import './styles/global.css';
 import './styles/app.css';
 import './styles/school.css';
 import './styles/print.css';
+import './styles/lar.css';
 
 installAudioUnlock();
 registerServiceWorker();

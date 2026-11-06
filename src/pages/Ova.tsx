@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { ChoiceGroup } from '../components/GameShell';
 import { IconPlay } from '../components/Icons';
 import { activitiesFor, getActivity } from '../curriculum';
-import { GRADES, gradeRange, SUBJECTS, subjectOf, type Grade, type SubjectId } from '../curriculum/types';
+import { gradeRange, SUBJECTS, subjectOf, type Grade, type SubjectId } from '../curriculum/types';
 import { Link, useRouter } from '../lib/router';
 import { ActivityRunner } from '../play/ActivityRunner';
 import { PortalShell } from './skola/ui';
@@ -11,7 +11,8 @@ import { PortalShell } from './skola/ui';
 export function OvaLibrary({ grade: initialGrade, subject: initialSubject }: { grade?: Grade; subject?: SubjectId }) {
   const [subject, setSubject] = useState<SubjectId>(initialSubject ?? 'matematik');
   const [grade, setGrade] = useState<Grade | 'alla'>(initialGrade ?? 'alla');
-  const list = useMemo(() => activitiesFor(subject, grade), [subject, grade]);
+  // Leklabbet visar förskoleklass till årskurs 3. Äldre elever övar i Lärlabbet.
+  const list = useMemo(() => activitiesFor(subject, grade).filter((a) => a.grades[0] <= 3 && !a.needsWordList), [subject, grade]);
   const subj = subjectOf(subject);
   const byArea = useMemo(() => {
     const m = new Map<string, typeof list>();
@@ -20,7 +21,7 @@ export function OvaLibrary({ grade: initialGrade, subject: initialSubject }: { g
   }, [list, subj]);
 
   return (
-    <PortalShell title="Öva ämnen" kicker="Förskoleklass till årskurs 6" back="/">
+    <PortalShell title="Öva skolämnen" kicker="Förskoleklass till årskurs 3" back="/lek">
       <p className="lead muted">Övningar som följer kursplanen. Välj ämne och årskurs – allt går att öva fritt, utan konto.</p>
       <div className="subject-tabs" role="tablist" aria-label="Ämne">
         {SUBJECTS.map((s) => (
@@ -31,9 +32,9 @@ export function OvaLibrary({ grade: initialGrade, subject: initialSubject }: { g
       </div>
       <div className="chip-row wrap" role="group" aria-label="Årskurs">
         <button className="chip" aria-pressed={grade === 'alla'} onClick={() => setGrade('alla')}>
-          Alla årskurser
+          F–3
         </button>
-        {GRADES.map((g) => (
+        {([0, 1, 2, 3] as Grade[]).map((g) => (
           <button key={g} className="chip" aria-pressed={grade === g} onClick={() => setGrade(g)}>
             {g === 0 ? 'F' : `Åk ${g}`}
           </button>
@@ -60,7 +61,9 @@ export function OvaLibrary({ grade: initialGrade, subject: initialSubject }: { g
           </section>
         ))
       )}
-      <p className="muted small">Områdena kommer från det centrala innehållet i Lgr22. När de nya kursplanerna kommer (planerat från hösten 2028) flyttas övningarna om till de nya områdena.</p>
+      <p className="muted small">
+        Går du i årskurs 4–6? Öva i <Link to="/lar">Lärlabbet</Link>.
+      </p>
     </PortalShell>
   );
 }

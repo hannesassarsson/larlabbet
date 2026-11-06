@@ -145,6 +145,7 @@ export function getRecord(gameId: string, key?: string): GameRecord | undefined 
 export function resetProgress() {
   removeKey('history');
   removeKey('records');
+  removeKey('lar-framsteg');
   try {
     if (session) {
       Object.keys(session)

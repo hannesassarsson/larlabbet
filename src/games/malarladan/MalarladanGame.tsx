@@ -208,13 +208,13 @@ export default function MalarladanGame({ meta }: { meta: GameMeta }) {
     const canvas = canvasRef.current;
     const url = finalImage ?? canvas?.toDataURL('image/png');
     if (!url) return;
-    const name = `leklandet-teckning-${new Date().toISOString().slice(0, 10)}.png`;
+    const name = `leklabbet-teckning-${new Date().toISOString().slice(0, 10)}.png`;
     try {
       const blob = await (await fetch(url)).blob();
       const file = new File([blob], name, { type: 'image/png' });
       const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
       if (nav.canShare?.({ files: [file] })) {
-        await nav.share({ files: [file], title: 'Min teckning från Leklandet' });
+        await nav.share({ files: [file], title: 'Min teckning från Leklabbet' });
         return;
       }
     } catch (err) {

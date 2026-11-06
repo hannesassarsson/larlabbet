@@ -10,30 +10,21 @@ PUB = ROOT / "public"
 
 INK = "#3B2F5C"
 
-def mark(x, y, s):
-    """Logotypens motiv (sol-boll bakom grön kulle) i en ruta på s×s px."""
-    k = s / 120
-    return f'''<g transform="translate({x} {y}) scale({k})">
-      <circle cx="60" cy="56" r="30" fill="#FFD166"/>
-      <circle cx="50" cy="52" r="5" fill="{INK}"/><circle cx="70" cy="52" r="5" fill="{INK}"/>
-      <circle cx="51.5" cy="50.5" r="1.6" fill="#fff"/><circle cx="71.5" cy="50.5" r="1.6" fill="#fff"/>
-      <path d="M49 64q11 9 22 0" stroke="{INK}" stroke-width="5" fill="none" stroke-linecap="round"/>
-    </g>'''
-
 def icon_svg(size, rounded, pad=0.0):
-    """Full ikon. rounded=False ger fyrkantig ikon (iOS rundar själv)."""
-    r = size * 0.27 if rounded else 0
+    """Lärlabbets ikon: vit kolv med turkos vätska på mörkblå botten."""
+    r = size * 0.24 if rounded else 0
     inner = size * (1 - 2 * pad)
     off = size * pad
     k = inner / 120
-    hill = f'<path transform="translate({off} {off}) scale({k})" d="M-40 90q28-20 60-6t60-4 80 0V170H-40z" fill="#7BD389"/>'
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" viewBox="0 0 {size} {size}">
-      <defs><clipPath id="c"><rect width="{size}" height="{size}" rx="{r}"/></clipPath></defs>
-      <g clip-path="url(#c)">
-        <rect width="{size}" height="{size}" fill="#FF8A5B"/>
-        <circle cx="{size*0.22}" cy="{size*0.2}" r="{size*0.05}" fill="#fff" opacity=".5"/>
-        {mark(off, off, inner)}
-        {hill}
+      <rect width="{size}" height="{size}" rx="{r}" fill="#1D2B4F"/>
+      <g transform="translate({off} {off}) scale({k})">
+        <path d="M47 24h26M51 24v24L30 84a8 8 0 0 0 7 12h46a8 8 0 0 0 7-12L69 48V24" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M38 72h44l8 12a6 6 0 0 1-5 9H35a6 6 0 0 1-5-9z" fill="#2EC4B6"/>
+        <circle cx="54" cy="80" r="3.5" fill="#fff" opacity=".85"/>
+        <circle cx="64" cy="64" r="3" fill="#fff" opacity=".7"/>
+        <circle cx="58" cy="54" r="2.2" fill="#fff" opacity=".6"/>
+        <path d="M86 26l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#FF8A5B"/>
       </g></svg>'''
 
 def render(svg, out, w, h=None):
@@ -48,7 +39,7 @@ render(icon_svg(512, True), PUB / "icons" / "icon-32.png", 32)
 render(icon_svg(512, False), PUB / "icons" / "apple-touch-icon.png", 180)
 render(icon_svg(512, True), PUB / "icons" / "icon-192.png", 192)
 render(icon_svg(512, True), PUB / "icons" / "icon-512.png", 512)
-render(icon_svg(512, False, pad=0.12), PUB / "icons" / "maskable-512.png", 512)
+render(icon_svg(512, False, pad=0.1), PUB / "icons" / "maskable-512.png", 512)
 
 # Startbilder för iPad (stående och liggande). Storlek i CSS-px och pixeltäthet.
 IPADS = [(768, 1024), (744, 1133), (810, 1080), (820, 1180), (834, 1112), (834, 1194), (834, 1210), (1024, 1366), (1032, 1376)]
@@ -58,11 +49,11 @@ for w, h in IPADS:
         pw, ph = (w * 2, h * 2) if orient == "portrait" else (h * 2, w * 2)
         s = min(pw, ph) * 0.22
         svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{pw}" height="{ph}" viewBox="0 0 {pw} {ph}">
-          <rect width="{pw}" height="{ph}" fill="#FFF8EE"/>
+          <rect width="{pw}" height="{ph}" fill="#F4F5F1"/>
           <g transform="translate({pw/2 - s/2} {ph/2 - s*0.75})">
             <svg width="{s}" height="{s}" viewBox="0 0 512 512">{re.sub(r'^<svg[^>]*>|</svg>$', '', icon_svg(512, True).strip())}</svg>
           </g>
-          <text x="{pw/2}" y="{ph/2 + s*0.55}" text-anchor="middle" font-family="sans-serif" font-weight="800" font-size="{s*0.32}" fill="{INK}">Leklandet</text>
+          <text x="{pw/2}" y="{ph/2 + s*0.55}" text-anchor="middle" font-family="sans-serif" font-weight="800" font-size="{s*0.32}" fill="#1D2433">Lärlabbet</text>
         </svg>'''
         name = f"ipad-{pw}x{ph}.png"
         render(svg, PUB / "startup" / name, pw, ph)

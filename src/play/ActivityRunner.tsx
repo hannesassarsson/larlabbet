@@ -8,6 +8,7 @@ import { shuffle } from '../lib/random';
 import { play } from '../lib/sound';
 import { canSpeak, speak, stopSpeaking } from '../lib/speech';
 import { useSessionState } from '../lib/storage';
+import { useMode } from '../lib/mode';
 import { VisualView } from './VisualView';
 
 export interface RunResult {
@@ -30,6 +31,8 @@ interface RunState {
   paused: boolean;
   bestStreak: number;
   streak: number;
+  /** Frågor som inte blev rätt på första försöket (index). */
+  misses: number[];
 }
 
 const fresh = (): RunState => ({
@@ -47,9 +50,17 @@ const fresh = (): RunState => ({
   paused: false,
   bestStreak: 0,
   streak: 0,
+  misses: [],
 });
 
 const SPELL_EXTRA = 'abdefghijklmnoprstuvy'.split('');
+
+/** Rätt svar som text, för genomgången efter en övning. */
+function answerText(q: Question): string {
+  if (q.kind === 'choice') return q.options[q.answer].label || 'bild';
+  if (q.kind === 'order') return q.items.join(' → ');
+  return q.answer;
+}
 
 function setupQuestion(q: Question | undefined): Pick<RunState, 'placed' | 'tiles'> {
   if (!q) return { placed: [], tiles: [] };
@@ -109,13 +120,15 @@ export function ActivityRunner({
   const q = s.questions[s.index];
   const lvl = level ?? activity.defaultLevel;
 
-  const start = () => {
+  const mode = useMode();
+
+  const startWith = (questions: Question[]) => {
     window.clearTimeout(timer.current);
     setBusy(false);
-    const questions = activity.generate(lvl, count, undefined, { wordList });
     play('pop');
     setS({ ...fresh(), phase: 'playing', questions, ...setupQuestion(questions[0]) });
   };
+  const start = () => startWith(activity.generate(lvl, count, undefined, { wordList }));
 
   const finish = (st: RunState) => {
     const result = { score: st.score, max: st.questions.length };
@@ -144,7 +157,14 @@ export function ActivityRunner({
   const markSolved = (st: RunState, clean: boolean, auto: boolean) => {
     play('good');
     const streak = clean ? st.streak + 1 : 0;
-    const out = { ...st, solved: true, score: st.score + (clean ? 1 : 0), streak, bestStreak: Math.max(st.bestStreak, streak) };
+    const out = {
+      ...st,
+      solved: true,
+      score: st.score + (clean ? 1 : 0),
+      streak,
+      bestStreak: Math.max(st.bestStreak, streak),
+      misses: clean ? st.misses : [...st.misses, st.index],
+    };
     setS(out);
     if (auto) {
       setBusy(true);
@@ -161,7 +181,7 @@ export function ActivityRunner({
     const wrong = [...s.wrong, i];
     // Efter två fel visas rätt svar, så att ingen fastnar.
     const reveal = wrong.length >= Math.min(2, q.options.length - 1);
-    setS({ ...s, wrong, revealed: reveal, solved: reveal, streak: 0 });
+    setS({ ...s, wrong, revealed: reveal, solved: reveal, streak: 0, misses: reveal ? [...s.misses, s.index] : s.misses });
     setBusy(true);
     timer.current = window.setTimeout(() => setBusy(false), 350);
   };
@@ -283,6 +303,66 @@ export function ActivityRunner({
             </button>
           )}
         </div>
+      </div>
+    );
+  }
+
+  /* ---------- Slut i Lärlabbet: resultat och genomgång av fel ---------- */
+  if (s.phase === 'done' && mode === 'lar') {
+    const total = s.questions.length;
+    const pct = total ? Math.round((s.score / total) * 100) : 0;
+    const verdict = pct >= 90 ? 'Det här kan du.' : pct >= 70 ? 'Nästan där.' : 'Det här behöver du öva mer på.';
+    const missed = s.misses.filter((i, k, arr) => arr.indexOf(i) === k).map((i) => s.questions[i]).filter(Boolean);
+    return (
+      <div className="page lar-result" style={accent}>
+        <section className="card lar-result-card">
+          <p className="hero-kicker">
+            {subject.short} · {activity.area}
+          </p>
+          <h1>{activity.title}</h1>
+          <div className="lar-score">
+            <div className="lar-score-big">
+              <b>{pct} %</b>
+              <span>
+                {s.score} av {total} rätt på första försöket
+              </span>
+            </div>
+            <div className="lar-meter" role="img" aria-label={`${pct} procent rätt`}>
+              <span style={{ width: `${pct}%` }} className={pct >= 90 ? 'good' : pct >= 70 ? 'mid' : 'low'} />
+            </div>
+            <p className="lar-verdict">{verdict}</p>
+          </div>
+          <div className="lar-result-actions">
+            {missed.length > 0 && (
+              <button className="btn btn-big" onClick={() => startWith(missed)}>
+                <IconRestart /> Öva på de {missed.length} du missade
+              </button>
+            )}
+            <button className={`btn btn-big${missed.length ? ' btn-soft' : ''}`} onClick={() => (clear(), start())}>
+              Nya frågor
+            </button>
+            <button className="btn btn-big btn-soft" onClick={() => (clear(), onExit())}>
+              <IconBack /> {exitLabel}
+            </button>
+          </div>
+        </section>
+        {missed.length > 0 && (
+          <section className="card lar-review" aria-labelledby="review-h">
+            <h2 id="review-h">Att titta på igen</h2>
+            <ol>
+              {missed.map((mq, i) => (
+                <li key={i}>
+                  <p className="review-q">{mq.prompt}</p>
+                  {'detail' in mq && mq.detail && <p className="review-detail">{mq.detail}</p>}
+                  <p className="review-a">
+                    Rätt svar: <b>{answerText(mq)}</b>
+                  </p>
+                  {'explain' in mq && mq.explain && <p className="review-explain">{mq.explain}</p>}
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
       </div>
     );
   }
