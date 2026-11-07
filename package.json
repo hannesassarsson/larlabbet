@@ -10,7 +10,11 @@
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
     "icons": "python3 scripts/icons.py",
-    "build:preview": "VITE_HASH_ROUTER=1 vite build --base ./ --outDir dist-preview && python3 scripts/preview_page.py"
+    "build:preview": "VITE_HASH_ROUTER=1 vite build --base ./ --outDir dist-preview && python3 scripts/preview_page.py",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report",
+    "check": "npm run typecheck && npm test && npm run test:e2e"
   },
   "dependencies": {
     "firebase": "^13.2.0",
@@ -19,6 +23,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/node": "^22.20.5",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^18.3.31",

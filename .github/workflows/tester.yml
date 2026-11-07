@@ -1,0 +1,56 @@
+name: Tester
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: tester-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Typkontroll, enhetstester och alla webbläsartester i Chromium (iPad liggande och stående).
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: rapport-chromium
+          path: playwright-report/
+          retention-days: 14
+
+  # Safaris motor (WebKit). Närmast en iPad som går att köra här, men inte samma sak.
+  # Blockerar inte: visar avvikelser i Safari utan att stoppa allt annat.
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps webkit
+      - run: npx playwright test --project=webkit-ipad
+        env:
+          PW_WEBKIT: '1'
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: rapport-webkit
+          path: playwright-report/
+          retention-days: 14

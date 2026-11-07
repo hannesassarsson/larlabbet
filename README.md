@@ -113,12 +113,30 @@ Alla kursplaneövningar finns också fritt under **Öva ämnen** (`/ova`).
 ```bash
 npm install
 npm run dev        # utvecklingsserver
-npm test           # enhetstester (spellogik)
+npm test           # enhetstester (spellogik, kursplaneinnehåll, arbetsblad)
+npm run test:e2e   # webbläsartester (bygger appen och kör den som på riktigt)
+npm run check      # allt ovan plus typkontroll
 npm run typecheck
 npm run build      # bygger till dist/ och genererar dist/sw.js
 npm run preview    # förhandsvisa bygget (service worker aktiv)
 npm run icons      # återskapa ikoner och startbilder (kräver rsvg-convert)
 ```
+
+## Tester
+
+| Typ | Var | Vad |
+|---|---|---|
+| Enhetstester (Vitest) | `src/**/*.test.ts` | Spellogik, att varje övning på varje nivå ger giltiga frågor med exakt ett rätt svar, arbetsblad och facit |
+| Webbläsartester (Playwright) | `e2e/*.spec.ts` | Alla spel till slutskärmen, Lärlabbet, skoldelen lärare → elev → förälder, arbetsblad och utskrift till A4-PDF, manifest, service worker och offline, layout och tryckytor på alla sidor |
+
+- Webbläsartesterna körs mot ett riktigt produktionsbygge, i iPad-storlek **liggande och stående**.
+- Varje test misslyckas automatiskt om sidan får ett JavaScript-fel (se `e2e/helpers.ts`).
+- Testerna läser spelets sparade läge för att veta rätt svar, så att de kan spela igenom hela omgångar.
+- `PW_WEBKIT=1 npm run test:e2e` kör också i Safaris motor (WebKit). Kräver `npx playwright install webkit`.
+- GitHub kör allt vid varje push (`.github/workflows/tester.yml`). WebKit-jobbet blockerar inte.
+- Vid fel: `npm run test:e2e:report` visar skärmdump och en inspelning av vad som hände.
+
+Inte täckt: en riktig iPad (Safari på iPadOS skiljer sig från WebKit på Linux), Firebase och dess regler, VoiceOver.
 
 ## Distribution
 

@@ -9,7 +9,7 @@ head = re.sub(r"<!--STARTUP_IMAGES-->.*?<!--/STARTUP_IMAGES-->", "", head, flags
 head = re.sub(r'\s*<meta (charset|name="viewport"|name="apple-[^"]*"|name="mobile-web-app-capable"|name="theme-color"|name="color-scheme"|name="format-detection")[^>]*>', "", head)
 head = re.sub(r'\s*<link rel="(manifest|apple-touch-icon)"[^>]*>', "", head)
 head = head.replace('href="/icons/', 'href="./icons/')
-head = head.replace("<title>Leklandet – lek och lär</title>", '<title>Leklandet</title>\n<meta name="claude:viewport-fit-sides" content="cover">')
+head = head.replace("<title>Lärlabbet</title>", '<title>Lärlabbet</title>\n<meta name="claude:viewport-fit-sides" content="cover">')
 out = head.strip() + "\n" + body.strip() + "\n"
 (d / "leklandet.html").write_text(out)
 print("dist-preview/leklandet.html", len(out), "tecken")

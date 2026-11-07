@@ -5,3 +5,6 @@ dist
 dist-preview
 .env.local
 .firebase
+test-results
+playwright-report
+blob-report
