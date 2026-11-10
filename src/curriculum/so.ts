@@ -35,11 +35,14 @@ const FORNTIDEN: Fact[] = [
   { q: 'Vad började människor göra under yngre stenåldern?', a: 'Odla och ha djur', w: ['Bygga bilar', 'Åka tåg'], e: 'När man började odla kunde man bo kvar på samma plats.' },
   { q: 'Vilket redskap kommer från stenåldern?', a: 'En yxa av flinta', w: ['En järnspade', 'En mobiltelefon'], e: 'Flinta är en hård sten som går att slå vass.' },
   { q: 'Vilken tid kom efter stenåldern?', a: 'Bronsåldern', w: ['Järnåldern', 'Vikingatiden'], e: 'Ordningen är stenålder, bronsålder, järnålder.' },
-  { q: 'Vilken metall började man använda under järnåldern?', a: 'Järn', w: ['Plast', 'Aluminium'], e: 'Järn är starkare än brons och fanns i myrar och berg.' },
+  { q: 'Varför tog järnet över efter bronset?', a: 'Järn var starkare och fanns i myrar och berg', w: ['Järn var mjukare och lättare att böja', 'Järn glänste mer och var finare'], e: 'Brons måste man handla till sig. Järn kunde man ta fram själv.' },
   { q: 'Brons är en blandning av koppar och …', a: 'tenn', w: ['järn', 'guld'], e: 'Koppar och tenn smälts ihop till brons.' },
   { q: 'Vad var en hällristning?', a: 'En bild som knackats in i berget', w: ['En målning på papper', 'En skylt av metall'], e: 'Hällristningar från bronsåldern finns bland annat i Tanum i Bohuslän.' },
   { q: 'Hur såg Norden ut under den senaste istiden?', a: 'Nästan allt var täckt av tjock is', w: ['Det var en öken', 'Det var precis som idag'], e: 'När isen smälte kom de första människorna till Sverige.' },
   { q: 'Vilket folk är urfolk i Sverige?', a: 'Samerna', w: ['Vikingarna', 'Romarna'], e: 'Samerna har levt i norra Skandinavien i tusentals år.' },
+  { q: 'Vad kallas de stora stengravarna från stenåldern?', a: 'Dösar och gånggrifter', w: ['Runstenar', 'Pyramider'], e: 'De byggdes av jättestora stenblock för länge sedan.' },
+  { q: 'Vilket djur tämjdes först av människan?', a: 'Hunden', w: ['Katten', 'Hästen'], e: 'Hunden hjälpte till vid jakten och vaktade boplatsen.' },
+  { q: 'Var bodde människorna ofta på stenåldern?', a: 'Nära vatten, där det fanns fisk', w: ['Högt uppe på kala fjäll', 'I stora städer'], e: 'Vid sjöar och hav fanns mat året runt.' },
 ];
 
 const MYTOLOGI: Fact[] = [
@@ -50,6 +53,11 @@ const MYTOLOGI: Fact[] = [
   { q: 'Vilken gud var känd för att lura de andra?', a: 'Loke', w: ['Tor', 'Balder'], e: 'Loke ställde ofta till med bus och bråk.' },
   { q: 'Vad hette Odens häst med åtta ben?', a: 'Sleipner', w: ['Mjölner', 'Fenrir'], e: 'Sleipner var den snabbaste av alla hästar.' },
   { q: 'Var bodde gudarna?', a: 'I Asgård', w: ['I Birka', 'I Uppsala slott'], e: 'Människornas värld kallades Midgård.' },
+  { q: 'Vart trodde vikingarna att de som dog i strid kom?', a: 'Till Valhall', w: ['Till Midgård', 'Till Utgård'], e: 'I Valhall festade krigarna med Oden.' },
+  { q: 'Vilken gud skulle ge god skörd och fina somrar?', a: 'Frej', w: ['Tor', 'Loke'], e: 'Frej var fruktbarhetens gud. Hans syster hette Freja.' },
+  { q: 'Vilken veckodag har fått sitt namn efter Tor?', a: 'Torsdag', w: ['Tisdag', 'Onsdag'], e: 'Onsdag kommer från Oden och fredag från Frigg.' },
+  { q: 'Vilka var gudarnas största fiender?', a: 'Jättarna', w: ['Människorna', 'Korparna'], e: 'Jättarna bodde i Utgård.' },
+  { q: 'Vad var Ragnarök?', a: 'Gudarnas och världens undergång', w: ['En vikingakung', 'Ett vikingaskepp'], e: 'Efter Ragnarök skulle en ny värld växa fram.' },
 ];
 
 const TID_OCH_KALLOR: Fact[] = [
@@ -59,6 +67,11 @@ const TID_OCH_KALLOR: Fact[] = [
   { q: 'Hur skickade man meddelanden långt bort innan telefonen fanns?', a: 'Med brev', w: ['Med sms', 'Med mejl'], e: 'Brev kunde ta lång tid att komma fram.' },
   { q: 'Hur fick man ljus hemma för 200 år sedan?', a: 'Med levande ljus och lampor med låga', w: ['Med elektriska lampor i taket', 'Med skärmar'], e: 'Elektriskt ljus blev vanligt i hemmen först på 1900-talet.' },
   { q: 'Vad är en tidslinje?', a: 'En linje där man visar i vilken ordning saker hände', w: ['En linje på fotbollsplanen', 'En klocka'], e: 'Det som hände först står längst till vänster.' },
+  { q: 'Vad är en källa när man lär sig historia?', a: 'Något som berättar vad som har hänt', w: ['En bäck i skogen', 'En sorts klocka'], e: 'Ett brev, ett foto eller ett gammalt föremål kan vara källor.' },
+  { q: 'Hur tvättade man kläder innan tvättmaskinen fanns?', a: 'För hand i vatten', w: ['I diskmaskinen', 'Med dammsugaren'], e: 'Tvätten tog ofta en hel dag.' },
+  { q: 'Vad gjorde många barn förr när de inte var i skolan?', a: 'Hjälpte till hemma och på gården', w: ['Spelade tv-spel', 'Åkte på charterresa'], e: 'Barn passade djur, bar vatten och hjälpte till i skörden.' },
+  { q: 'Hur lång tid är ett sekel?', a: 'Hundra år', w: ['Tio år', 'Tusen år'], e: '1800-talet är ett sekel: åren 1800 till 1899.' },
+  { q: 'Vad är nutid?', a: 'Det som händer just nu', w: ['Det som hände förra året', 'Det som händer om hundra år'], e: 'Dåtid, nutid och framtid.' },
 ];
 
 /* ---------- Åk 4–6: historia ---------- */
@@ -81,11 +94,11 @@ const NORDEN_800_1500: Fact[] = [
 const NORDEN_1500_1800: Fact[] = [
   { q: 'Vem valdes till kung av Sverige 1523?', a: 'Gustav Vasa', w: ['Gustav II Adolf', 'Karl XII'], e: 'Den 6 juni 1523 valdes Gustav Vasa till kung. Därför är 6 juni nationaldag.' },
   { q: 'Vad kallas avrättningarna i Stockholm år 1520?', a: 'Stockholms blodbad', w: ['Digerdöden', 'Freden i Nystad'], e: 'Den danske kungen Kristian II lät avrätta många svenska stormän.' },
-  { q: 'Vad innebar reformationen i Sverige?', a: 'Sverige blev protestantiskt och kyrkan kom under kungen', w: ['Sverige blev en republik', 'Sverige fick en ny huvudstad'], e: 'Under Gustav Vasa bröt Sverige med påven i Rom.' },
+  { q: 'Vad innebar reformationen i Sverige?', a: 'Sverige blev protestantiskt och kyrkan kom under kungen', w: ['Sverige blev en republik utan kung och kyrka', 'Sverige blev katolskt och styrdes av påven'], e: 'Under Gustav Vasa bröt Sverige med påven i Rom.' },
   { q: 'Vad hette regalskeppet som sjönk i Stockholm 1628?', a: 'Vasa', w: ['Titanic', 'Kalmar Nyckel'], e: 'Vasa bärgades 1961 och finns på Vasamuseet.' },
   { q: 'Vilken kung dog i slaget vid Lützen 1632?', a: 'Gustav II Adolf', w: ['Gustav Vasa', 'Karl XI'], e: 'Slaget var en del av trettioåriga kriget.' },
   { q: 'Vad kallas tiden då Sverige var en stormakt runt Östersjön?', a: 'Stormaktstiden', w: ['Vikingatiden', 'Industrialiseringen'], e: 'Stormaktstiden räknas ungefär från 1611 till 1721.' },
-  { q: 'Vilka fyra stånd fanns i riksdagen?', a: 'Adel, präster, borgare och bönder', w: ['Kungar, drottningar, prinsar och prinsessor', 'Läkare, lärare, poliser och bönder'], e: 'Ståndssamhället delade in människor efter vilken grupp de föddes i.' },
+  { q: 'Vilka fyra stånd fanns i riksdagen?', a: 'Adel, präster, borgare och bönder', w: ['Adel, präster, soldater och köpmän', 'Kungar, adel, präster och bönder'], e: 'Ståndssamhället delade in människor efter vilken grupp de föddes i.' },
   { q: 'Vilken drottning lämnade frivilligt tronen 1654?', a: 'Kristina', w: ['Margareta', 'Victoria'], e: 'Drottning Kristina abdikerade och flyttade till Rom.' },
   { q: 'Vilken fred 1721 brukar räknas som slutet på stormaktstiden?', a: 'Freden i Nystad', w: ['Freden i Roskilde', 'Freden i Paris'], e: 'Sverige förlorade då stora områden runt Östersjön.' },
   { q: 'Vilken svensk naturforskare på 1700-talet gav namn åt växter och djur?', a: 'Carl von Linné', w: ['Alfred Nobel', 'Anders Celsius'], e: 'Linnés system för att namnge arter används fortfarande.' },
@@ -102,6 +115,9 @@ const SVERIGE_1800: Fact[] = [
   { q: 'Vilken gröda gjorde att färre svalt i Sverige under 1800-talet?', a: 'Potatisen', w: ['Bananen', 'Riset'], e: 'Potatisen var lätt att odla och gav mycket mat.' },
   { q: 'Vem uppfann dynamiten?', a: 'Alfred Nobel', w: ['Carl von Linné', 'Gustav Vasa'], e: 'Nobel skrev i sitt testamente att hans pengar skulle bli Nobelpriset.' },
   { q: 'Vad skrev prästen upp i kyrkböckerna?', a: 'Vilka som föddes, dog och flyttade', w: ['Vädret varje dag', 'Priser i affärerna'], e: 'Kyrkböcker är viktiga källor när man släktforskar.' },
+  { q: 'Vad kallas de stora föreningar som många vanliga människor gick med i under slutet av 1800-talet?', a: 'Folkrörelser', w: ['Gillen', 'Stånd'], e: 'Till exempel nykterhetsrörelsen, arbetarrörelsen och frikyrkorna.' },
+  { q: 'Vad drev de första ångloken och fabriksmaskinerna?', a: 'Ånga från kokande vatten', w: ['El från stora solceller', 'Bensin från oljekällor'], e: 'Kol eller ved eldades för att koka vattnet.' },
+  { q: 'Vad fick en statare det mesta av sin lön i?', a: 'Mat och andra varor', w: ['Silvermynt från staten', 'Aktier i gården'], e: 'Statarna arbetade på stora gårdar. Lönen i varor kallades stat.' },
 ];
 
 /* ---------- Åk 4–6: geografi och samhälle ---------- */
@@ -134,6 +150,11 @@ const SAMHALLE: Fact[] = [
   { q: 'Vad heter FN:s överenskommelse om barns rättigheter?', a: 'Barnkonventionen', w: ['Grundlagen', 'Skollagen'], e: 'Barnkonventionen blev svensk lag år 2020.' },
   { q: 'Vad används skatten till?', a: 'Till exempel skola, sjukvård och vägar', w: ['Bara till kungens slott', 'Ingenting'], e: 'Alla som tjänar pengar betalar skatt.' },
   { q: 'Vad kallas Sveriges pengar?', a: 'Kronor', w: ['Euro', 'Dollar'], e: 'En krona är hundra öre.' },
+  { q: 'Vem leder Sveriges regering?', a: 'Statsministern', w: ['Talmannen', 'Kungen'], e: 'Statsministern väljer vilka som ska bli ministrar.' },
+  { q: 'Vad gör en domstol?', a: 'Avgör om någon har brutit mot lagen', w: ['Stiftar nya lagar', 'Samlar in skatt'], e: 'Domstolen ska vara opartisk och följa lagen.' },
+  { q: 'Vad betyder yttrandefrihet?', a: 'Att man får säga och skriva vad man tycker', w: ['Att man måste hålla med regeringen', 'Att man får göra precis vad man vill'], e: 'Yttrandefriheten skyddas i grundlagen, men man får till exempel inte hota någon.' },
+  { q: 'Vad ansvarar regionerna främst för?', a: 'Sjukvården', w: ['Försvaret', 'Att välja kung'], e: 'Sverige har 21 regioner.' },
+  { q: 'Vad är en budget?', a: 'En plan för pengar som kommer in och går ut', w: ['En sorts skatt', 'En lag om trafik'], e: 'Både familjer, kommuner och staten gör budgetar.' },
 ];
 
 /* ---------- Tidslinjer ---------- */

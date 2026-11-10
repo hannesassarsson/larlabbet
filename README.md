@@ -17,14 +17,15 @@ utifrån klassens årskurs. Lärar-, föräldra- och arbetsbladssidorna använde
 
 ## Innehåll enligt kursplanen
 
-66 övningar, märkta med ämne, årskurs och område i Lgr22:s centrala innehåll:
+78 övningar, märkta med ämne, årskurs och område i Lgr22:s centrala innehåll:
 
 | Ämne | Övningar | Exempel |
 |---|---|---|
 | Matematik F–6 | 26 | räkna, talraden, klockan, bråk, gångertabellen, decimaltal, negativa tal, procent, ekvationer, area, vinklar, lägesmått, koordinater, lästal, mönster |
-| Svenska F–6 | 18 | bokstavsljud, alfabetet, rim, stavning, stor bokstav och punkt, en/ett, plural, skiljetecken, ordklasser, verb i preteritum, sambandsord, sj-/tj-/j-ljud, texttyper |
-| Engelska 1–6 | 13 | tolv färdiga glosteman och lärarens egna glosor (svenska→engelska, engelska→svenska, stava) |
+| Svenska F–6 | 20 | läsförståelse (15 egna texter: berättelser, faktatexter, brev, instruktioner, tidtabell, argumenterande text), bokstavsljud, alfabetet, rim, stavning, stor bokstav och punkt, en/ett, plural, skiljetecken, ordklasser, verb i preteritum, sambandsord, sj-/tj-/j-ljud, texttyper |
+| Engelska 1–6 | 13 | tolv färdiga glosteman och lärarens egna glosor (svenska→engelska, engelska→svenska, stava). Det engelska ordet läses upp efter rätt svar |
 | SO F–6 | 9 | stenålder–järnålder, nordisk mytologi, förr och nu, tidslinjer, vikingatid–medeltid, Vasatiden och stormaktstiden, 1800-talet, geografi, samhället |
+| NO F–6 | 10 | året runt i naturen, kroppen, material och vatten (flyta/sjunka), kraft, ljud och ljus, djurgrupper, ekologi och näringskedjor, människokroppen, el och energi (ledare/isolatorer), solsystemet, kemi i vardagen |
 
 Engelska börjar i årskurs 1 eftersom kursplanen inte omfattar förskoleklass.
 
@@ -152,7 +153,7 @@ installationen på hemskärmen ska fungera fullt ut (undantag: `localhost`).
 
 ```
 src/
-  curriculum/               kursplaneinnehåll: ämnen, årskurser, 66 övningar (generatorer och frågebanker)
+  curriculum/               kursplaneinnehåll: ämnen, årskurser, 78 övningar (generatorer och frågebanker)
   play/                     gemensam spelare för övningarna (flerval, ordning, stavning) och figurer
   backend/                  gränssnitt + demoläge (local.ts) + Firebase (firebase.ts)
   pages/skola, elev, larare, foralder   skoldelen

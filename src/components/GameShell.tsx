@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import type { GameMeta } from '../games/registry';
 import { useRouter } from '../lib/router';
 import { markPlayed } from '../lib/storage';
@@ -197,15 +197,64 @@ export function Stat({ icon, value, label }: { icon?: ReactNode; value: ReactNod
   );
 }
 
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+/**
+ * Dialogruta. Fokus flyttas in i rutan och stannar där (Tab går runt), Escape
+ * stänger, och när rutan stängs hamnar fokus där det var innan. Resten av sidan
+ * döljs för skärmläsare medan rutan är öppen.
+ */
 export function Overlay({ children, onClose, label }: { children: ReactNode; onClose?: () => void; label: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+  // Läses vid första renderingen, innan autoFocus i rutan hinner flytta fokus.
+  const beforeRef = useRef(typeof document !== 'undefined' ? (document.activeElement as HTMLElement | null) : null);
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose?.();
+    const box = ref.current!;
+    const before = beforeRef.current;
+    // Fokusera knappen med autoFocus om det finns en, annars första knappen, annars rutan.
+    if (!box.contains(document.activeElement)) (box.querySelector<HTMLElement>(FOCUSABLE) ?? box).focus();
+    // Dölj allt utom rutan: syskonen på varje nivå från rutan upp till <body>.
+    const hidden: HTMLElement[] = [];
+    for (let node: HTMLElement | null = box.closest<HTMLElement>('.overlay'); node && node !== document.body; node = node.parentElement) {
+      for (const el of Array.from(node.parentElement?.children ?? []) as HTMLElement[]) {
+        if (el === node || el.hasAttribute('aria-hidden') || el.tagName === 'SCRIPT' || el.tagName === 'STYLE') continue;
+        el.setAttribute('aria-hidden', 'true');
+        el.setAttribute('inert', '');
+        hidden.push(el);
+      }
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeRef.current?.();
+      if (e.key !== 'Tab') return;
+      const items = Array.from(box.querySelectorAll<HTMLElement>(FOCUSABLE)).filter((el) => el.offsetParent !== null);
+      if (items.length === 0) return e.preventDefault();
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && (document.activeElement === first || !box.contains(document.activeElement))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (document.activeElement === last || !box.contains(document.activeElement))) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      for (const el of hidden) {
+        el.removeAttribute('aria-hidden');
+        el.removeAttribute('inert');
+      }
+      if (before && document.contains(before)) before.focus({ preventScroll: true });
+    };
+  }, []);
   return (
     <div className="overlay" role="dialog" aria-modal="true" aria-label={label}>
-      <div className="overlay-card card pop">{children}</div>
+      <div className="overlay-card card pop" ref={ref} tabIndex={-1}>
+        {children}
+      </div>
     </div>
   );
 }

@@ -90,3 +90,16 @@ test('utskrift: bara papperen syns och det blir A4-sidor med facit', async ({ pa
   expect(pages).toBeGreaterThanOrEqual(3);
   expect(pages).toBeLessThanOrEqual(6);
 });
+
+test('läsförståelse skrivs ut med texten', async ({ page }) => {
+  await seedWorksheet(page, {
+    grade: 5, seed: 77, facit: true, nameLine: true, big: false, variants: 1, mode: 'auto', title: '', words: '',
+    sections: [{ activityId: 'sv-lasforstaelse-4-6', count: 5 }],
+  });
+  await page.goto('/arbetsblad');
+  const paper = page.locator('.paper').first();
+  await expect(paper.locator('.ws-passage').first()).toBeVisible();
+  expect(((await paper.locator('.ws-passage').first().innerText()) || '').length).toBeGreaterThan(200);
+  await expect(paper.locator('.ws-item')).toHaveCount(5);
+  await expect(page.locator('.paper.facit')).toContainText('Läsförståelse');
+});

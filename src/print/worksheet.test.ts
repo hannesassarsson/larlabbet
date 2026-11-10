@@ -67,4 +67,15 @@ describe('Arbetsblad', () => {
       expect(buildSheet(cfg({ grade: g, sections: s })).sections.every((x) => !x.problem)).toBe(true);
     }
   });
+
+  it('läsförståelse: texten följer med och frågorna ringas in', () => {
+    const s = buildSheet(cfg({ grade: 5, sections: [{ activityId: 'sv-lasforstaelse-4-6', count: 8 }] })).sections[0];
+    expect(s.layout).toBe('reading');
+    expect(s.items.length).toBe(8);
+    expect(s.items.every((i) => i.answer === 'choose' && i.q.kind === 'choice' && i.q.passage)).toBe(true);
+    // Frågor om samma text ligger i följd, så att texten bara skrivs ut en gång per grupp.
+    const ids = s.items.map((i) => (i.q.kind === 'choice' ? i.q.passage!.id : ''));
+    const groups = ids.filter((id, k) => id !== ids[k - 1]);
+    expect(new Set(groups).size).toBe(groups.length);
+  });
 });

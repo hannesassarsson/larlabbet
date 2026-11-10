@@ -980,12 +980,15 @@ button.item-row:active {
 /* ---------- Övningsbiblioteket ---------- */
 .subject-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
 }
 @media (max-width: 760px) {
   .subject-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .subject-grid > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
 }
 .subject-card {
@@ -1014,7 +1017,7 @@ button.item-row:active {
 }
 .subject-tabs {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 10px;
   margin-bottom: 12px;
 }
@@ -1339,3 +1342,148 @@ button.item-row:active {
   align-items: center;
   gap: 16px;
 }
+
+/* ================= Läsförståelse ================= */
+.run-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: inherit;
+  width: 100%;
+}
+.run-stage.has-passage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 22px;
+  justify-content: stretch;
+}
+.run-stage.has-passage > .run-main {
+  margin: 0;
+  align-self: center;
+}
+.run-stage.has-passage > .passage {
+  margin: 0;
+  max-height: 100%;
+}
+.has-passage .run-options,
+.has-passage .run-options.n3:not(.long),
+.has-passage .run-options.n4:not(.long) {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 520px;
+}
+.has-passage .run-option {
+  min-height: 64px;
+}
+.has-passage .run-question {
+  font-size: clamp(22px, 2.6vw, 28px);
+}
+.passage {
+  align-self: stretch;
+  overflow-y: auto;
+  padding: 22px 26px 26px;
+  border-radius: var(--radius-l);
+  background: #fffdf8;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  -webkit-overflow-scrolling: touch;
+}
+.passage-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--line);
+}
+.passage-head h2 {
+  flex: 1 1 14ch;
+  font-size: clamp(24px, 3vw, 30px);
+  font-weight: 900;
+}
+.passage-genre {
+  order: 0;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--game-soft);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.passage-head .btn {
+  margin-left: auto;
+  min-height: 44px;
+}
+.passage-body {
+  display: grid;
+  gap: 14px;
+  font-size: clamp(19px, 2.2vw, 22px);
+  line-height: 1.6;
+  max-width: 62ch;
+}
+.passage-line {
+  display: block;
+}
+.genre-schema .passage-body {
+  font-variant-numeric: tabular-nums;
+}
+.genre-schema .passage-line {
+  white-space: pre-wrap;
+}
+@media (orientation: portrait), (max-width: 860px) {
+  .run-stage.has-passage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .run-stage.has-passage {
+    align-content: start;
+  }
+  .run-stage.has-passage > .passage {
+    max-height: 42vh;
+  }
+  .run-stage.has-passage > .run-main {
+    align-self: start;
+    padding-top: 8px;
+  }
+  .has-passage .run-options,
+  .has-passage .run-options.n3:not(.long),
+  .has-passage .run-options.n4:not(.long) {
+    max-width: none;
+  }
+}
+[data-mode='lar'] .passage {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: none;
+}
+[data-mode='lar'] .passage-head h2 {
+  font-weight: 800;
+}
+[data-mode='lar'] .passage-genre {
+  border-radius: 6px;
+  background: var(--accent-soft);
+}
+@media (orientation: landscape) and (min-width: 861px) {
+  .run-stage.has-passage {
+    grid-template-rows: minmax(0, 1fr);
+    overflow: hidden;
+  }
+  .run-stage.has-passage > .passage {
+    height: 100%;
+  }
+  .run-stage.has-passage > .run-main {
+    max-height: 100%;
+    overflow-y: auto;
+  }
+}
+.activity-area {
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+.area-section + p.muted.small { margin-top: 20px; }

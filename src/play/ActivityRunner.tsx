@@ -3,11 +3,11 @@ import { Feedback, Overlay, Stars, starsFrom } from '../components/GameShell';
 import { IconBack, IconBulb, IconPause, IconPlay, IconRestart, IconSoundOn } from '../components/Icons';
 import { SoundToggle } from '../components/SoundToggle';
 import { levelLabel } from '../curriculum';
-import { gradeRange, subjectOf, type Activity, type ChoiceQuestion, type OrderQuestion, type Question, type SpellQuestion, type WordList } from '../curriculum/types';
+import { gradeRange, subjectOf, type Activity, type ChoiceQuestion, type Passage, type OrderQuestion, type Question, type SpellQuestion, type WordList } from '../curriculum/types';
 import { shuffle } from '../lib/random';
 import { play } from '../lib/sound';
 import { canSpeak, speak, stopSpeaking } from '../lib/speech';
-import { useSessionState } from '../lib/storage';
+import { getSettings, useSessionState } from '../lib/storage';
 import { useMode } from '../lib/mode';
 import { VisualView } from './VisualView';
 
@@ -166,10 +166,14 @@ export function ActivityRunner({
       misses: clean ? st.misses : [...st.misses, st.index],
     };
     setS(out);
+    // Glosor: säg det engelska ordet högt när man har svarat rätt, så att man hör uttalet.
+    const q = st.questions[st.index];
+    const english = activity.subject === 'engelska' && q.kind === 'choice' && q.cue ? (q.prompt.startsWith('Vad betyder') ? q.cue : q.options[q.answer].label) : '';
+    if (english && getSettings().sound) window.setTimeout(() => speak(english, 'en'), 250);
     if (auto) {
       setBusy(true);
       // Läs senaste läget när tiden har gått, så att vi aldrig använder ett gammalt index.
-      timer.current = window.setTimeout(() => advance(latest.current), 1200);
+      timer.current = window.setTimeout(() => advance(latest.current), english ? 1700 : 1200);
     }
   };
 
@@ -352,6 +356,7 @@ export function ActivityRunner({
             <ol>
               {missed.map((mq, i) => (
                 <li key={i}>
+                  {mq.kind === 'choice' && mq.passage && <p className="review-detail">Ur texten ”{mq.passage.title}”</p>}
                   <p className="review-q">{mq.prompt}</p>
                   {'detail' in mq && mq.detail && <p className="review-detail">{mq.detail}</p>}
                   <p className="review-a">
@@ -413,6 +418,7 @@ export function ActivityRunner({
   }
 
   /* ---------- Spelet ---------- */
+  const passage = q.kind === 'choice' ? q.passage : undefined;
   return (
     <div className="game-screen" style={accent}>
       <header className="game-topbar">
@@ -446,7 +452,9 @@ export function ActivityRunner({
         </button>
       </header>
 
-      <div className="game-stage run-stage" key={s.index}>
+      <div className={`game-stage run-stage${passage ? ' has-passage' : ''}`}>
+        {passage && <ReadingPassage key={passage.id} p={passage} />}
+        <div className="run-main" key={s.index}>
         <div className="run-prompt pop">
           <p className="run-question">{q.prompt}</p>
           {'detail' in q && q.detail && <p className="run-detail">{q.detail}</p>}
@@ -478,6 +486,7 @@ export function ActivityRunner({
             {s.index + 1 === s.questions.length ? 'Se resultatet' : 'Nästa'}
           </button>
         )}
+        </div>
       </div>
 
       {s.paused && (
@@ -518,6 +527,35 @@ export function ActivityRunner({
         </Overlay>
       )}
     </div>
+  );
+}
+
+/** Läsförståelsens text. Ligger kvar medan eleven svarar på frågorna om den. */
+function ReadingPassage({ p }: { p: Passage }) {
+  const paragraphs = p.text.split(/\n\s*\n/);
+  return (
+    <article className={`passage genre-${p.genre.replace(/\s+/g, '-')}`} aria-label={`Text: ${p.title}`}>
+      <header className="passage-head">
+        {/* Textsorten visas inte: den är ofta själva frågan. */}
+        <h2>{p.title}</h2>
+        {canSpeak() && (
+          <button className="btn btn-soft btn-small" onClick={() => speak(`${p.title}. ${p.text.replace(/\n/g, ' ')}`)}>
+            <IconSoundOn /> Läs upp texten
+          </button>
+        )}
+      </header>
+      <div className="passage-body">
+        {paragraphs.map((para, i) => (
+          <p key={i}>
+            {para.split('\n').map((line, k) => (
+              <span key={k} className="passage-line">
+                {line}
+              </span>
+            ))}
+          </p>
+        ))}
+      </div>
+    </article>
   );
 }
 

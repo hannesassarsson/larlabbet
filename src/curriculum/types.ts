@@ -6,7 +6,7 @@ import type { Rng } from '../lib/random';
  * så att det går att flytta om när de nya kursplanerna (planerade från ht 2028)
  * kommer – utan att själva övningarna behöver skrivas om.
  */
-export type SubjectId = 'matematik' | 'svenska' | 'engelska' | 'so';
+export type SubjectId = 'matematik' | 'svenska' | 'engelska' | 'so' | 'no';
 
 /** 0 = förskoleklass (F), 1–6 = årskurs. */
 export type Grade = 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -50,6 +50,16 @@ export interface ChoiceQuestion {
   explain?: string;
   /** Kort form för papper, t.ex. bara det svenska ordet i ett glosförhör. */
   cue?: string;
+  /** Läsförståelse: texten som frågan gäller. Flera frågor kan dela samma text. */
+  passage?: Passage;
+}
+
+export interface Passage {
+  id: string;
+  title: string;
+  /** Stycken skiljs åt med en tom rad. Rader som börjar med "– " är repliker. */
+  text: string;
+  genre: 'berättelse' | 'faktatext' | 'instruktion' | 'brev' | 'schema' | 'argumenterande text';
 }
 
 export interface OrderQuestion {
@@ -172,6 +182,22 @@ export const SUBJECTS: Subject[] = [
       'Historia: ca 1800–1900',
       'Geografi',
       'Samhällskunskap',
+    ],
+  },
+  {
+    id: 'no',
+    name: 'NO – biologi, fysik och kemi',
+    short: 'NO',
+    color: '#2EC4B6',
+    soft: '#D4F4F0',
+    areas: [
+      'Året runt i naturen (åk 1–3)',
+      'Kropp och hälsa (åk 1–3)',
+      'Kraft och rörelse (åk 1–3)',
+      'Material och ämnen (åk 1–3)',
+      'Biologi (åk 4–6)',
+      'Fysik (åk 4–6)',
+      'Kemi (åk 4–6)',
     ],
   },
 ];

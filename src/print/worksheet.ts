@@ -44,7 +44,7 @@ export const DEFAULT_CONFIG: SheetConfig = {
   grade: 2,
 };
 
-export type PrintLayout = 'compact' | 'list' | 'glosor' | 'pictures';
+export type PrintLayout = 'compact' | 'list' | 'glosor' | 'pictures' | 'reading';
 
 export interface PrintItem {
   q: Question;
@@ -95,6 +95,7 @@ function letterBank(answer: string, extra: number, seed: number) {
 function instructionFor(layout: PrintLayout, items: PrintItem[], a: Activity, level?: string): string {
   const kinds = new Set(items.map((i) => i.answer));
   if (layout === 'glosor') return level === 'en-sv' ? 'Skriv vad orden betyder på svenska.' : 'Skriv orden på engelska.';
+  if (layout === 'reading') return 'Läs texten. Ringa in rätt svar på frågorna.';
   if (kinds.size === 1) {
     const k = [...kinds][0];
     if (k === 'order') return 'Skriv 1, 2, 3 och 4 i rutorna så att det blir rätt ordning.';
@@ -136,7 +137,11 @@ export function buildSheet(config: SheetConfig, variant = 0): PrintSheet {
 
     let layout: PrintLayout = 'list';
     const choice = items.every((i) => i.q.kind === 'choice');
-    if (choice && items.every((i) => i.answer === 'write' && (i.q as ChoiceQuestion).cue)) layout = 'glosor';
+    if (choice && items.every((i) => (i.q as ChoiceQuestion).passage)) {
+      layout = 'reading';
+      // Läsförståelse ringas alltid in: svaren är för långa för en skrivrad.
+      items.forEach((i) => (i.answer = 'choose'));
+    } else if (choice && items.every((i) => i.answer === 'write' && (i.q as ChoiceQuestion).cue)) layout = 'glosor';
     else if (choice && items.every((i) => i.answer === 'write' && !('visual' in i.q && i.q.visual) && !('detail' in i.q && i.q.detail) && i.q.prompt.length <= 26)) layout = 'compact';
     else if (choice && items.every((i) => i.answer === 'choose' && (i.q as ChoiceQuestion).options.every((o) => o.hideLabel))) layout = 'pictures';
 

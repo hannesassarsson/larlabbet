@@ -1,39 +1,49 @@
-import { useEffect, useLayoutEffect, useState, type ComponentType } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useState, type ComponentType } from 'react';
 import { IconBack } from './components/Icons';
 import { LogoMark } from './components/Logo';
-import BokstavsjaktenGame from './games/bokstavsjakten/BokstavsjaktenGame';
-import MalarladanGame from './games/malarladan/MalarladanGame';
-import MatteGame from './games/matte/MatteGame';
-import MemoryGame from './games/memory/MemoryGame';
-import MonsterGame from './games/monster/MonsterGame';
 import { getGame, type GameMeta } from './games/registry';
-import SantFalsktGame from './games/santfalskt/SantFalsktGame';
-import StavningGame from './games/stavning/StavningGame';
 import { Link, match, RouterProvider, useRouter } from './lib/router';
-import { ElevHome, ElevLogin, ElevUppgift } from './pages/elev/Elev';
-import { ForalderHome } from './pages/foralder/Foralder';
-import { KlassPage, KortPage, LarareHome } from './pages/larare/Larare';
-import { UppdragEditorPage } from './pages/larare/UppdragEditor';
 import { OvaActivity, OvaLibrary } from './pages/Ova';
-import Skola from './pages/skola/Skola';
-import Arbetsblad from './pages/Arbetsblad';
 import { LarActivity, LarHome, LarSubject, StartPage } from './pages/lar/Lar';
 import { APP_NAME, BRAND, getLastPart, getMode, modeForPath, setMode } from './lib/mode';
 import type { Grade, SubjectId } from './curriculum/types';
 import { onUpdateAvailable, applyUpdate } from './lib/sw';
-import Hjalp from './pages/Hjalp';
 import Home from './pages/Home';
-import Installera from './pages/Installera';
 
-const GAME_COMPONENTS: Record<string, ComponentType<{ meta: GameMeta }>> = {
-  memory: MemoryGame,
-  bokstavsjakten: BokstavsjaktenGame,
-  stavning: StavningGame,
-  matte: MatteGame,
-  monster: MonsterGame,
-  santfalskt: SantFalsktGame,
-  malarladan: MalarladanGame,
-};
+/*
+ * Startsidorna och övningarna laddas direkt. Spelen, lärarsidorna, arbetsbladen
+ * och hjälpsidorna laddas först när de behövs, så att appen startar snabbare.
+ * Service workern sparar alla delar, så allt fungerar ändå offline.
+ */
+const page = <T,>(load: () => Promise<T>, pick: (m: T) => ComponentType<any>) => lazy(() => load().then((m) => ({ default: pick(m) })));
+const games = () => import('./games/all');
+const elev = () => import('./pages/elev/Elev');
+const larare = () => import('./pages/larare/Larare');
+const ElevHome = page(elev, (m) => m.ElevHome);
+const ElevLogin = page(elev, (m) => m.ElevLogin);
+const ElevUppgift = page(elev, (m) => m.ElevUppgift);
+const LarareHome = page(larare, (m) => m.LarareHome);
+const KlassPage = page(larare, (m) => m.KlassPage);
+const KortPage = page(larare, (m) => m.KortPage);
+const UppdragEditorPage = page(() => import('./pages/larare/UppdragEditor'), (m) => m.UppdragEditorPage);
+const ForalderHome = page(() => import('./pages/foralder/Foralder'), (m) => m.ForalderHome);
+const Skola = page(() => import('./pages/skola/Skola'), (m) => m.default);
+const Arbetsblad = page(() => import('./pages/Arbetsblad'), (m) => m.default);
+const Hjalp = page(() => import('./pages/Hjalp'), (m) => m.default);
+const Installera = page(() => import('./pages/Installera'), (m) => m.default);
+const GAME_COMPONENTS: Record<string, ComponentType<{ meta: GameMeta }>> = Object.fromEntries(
+  ['memory', 'bokstavsjakten', 'stavning', 'matte', 'monster', 'santfalskt', 'malarladan'].map((id) => [id, page(games, (m) => m.GAMES[id])])
+);
+
+/** Visas en kort stund medan en del av appen laddas. Syns bara om det dröjer. */
+function Loading() {
+  return (
+    <div className="page-loading" role="status" aria-label="Laddar">
+      <span />
+    </div>
+  );
+}
+
 
 function NotFound() {
   return (
@@ -149,7 +159,9 @@ export default function App() {
   return (
     <RouterProvider>
       <main className="app">
-        <Routes />
+        <Suspense fallback={<Loading />}>
+          <Routes />
+        </Suspense>
       </main>
       <UpdateToast />
     </RouterProvider>

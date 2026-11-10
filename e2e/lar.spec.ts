@@ -24,7 +24,7 @@ test('första besöket visar valet, och appen minns vald del', async ({ page }) 
 
 test('ämnessidan visar kursplanens områden för vald årskurs', async ({ page }) => {
   await page.goto('/lar');
-  await expect(page.locator('.lar-subject')).toHaveCount(4);
+  await expect(page.locator('.lar-subject')).toHaveCount(5);
   await page.getByRole('radio', { name: 'Åk 6' }).click();
   await page.locator('.lar-subject', { hasText: 'Matematik' }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Matematik');
@@ -55,4 +55,29 @@ test('en SO-övning går att göra hela vägen', async ({ page }) => {
   await page.goto('/lar/ova/hi-stormaktstiden');
   await playRunner(page);
   await expect(page.locator('.lar-score')).toContainText('10 av 10');
+});
+
+test('läsförståelse: texten syns bredvid frågorna och går att läsa upp', async ({ page }) => {
+  await page.goto('/lar/ova/sv-lasforstaelse-4-6');
+  await page.getByRole('button', { name: 'Börja', exact: true }).click();
+  const passage = page.locator('.passage');
+  await expect(passage).toBeVisible();
+  await expect(passage.locator('h2, h3').first()).not.toBeEmpty();
+  await expect(passage.getByRole('button', { name: /Läs upp/ })).toBeVisible();
+  // Texten och frågan ska båda synas utan att man scrollar, på iPad.
+  const p = await passage.boundingBox();
+  const opts = await page.locator('.run-main .run-option').first().boundingBox();
+  const vp = page.viewportSize()!;
+  expect(p && opts).toBeTruthy();
+  expect(opts!.y + opts!.height).toBeLessThanOrEqual(vp.height + 1);
+  await playRunner(page);
+  await expect(page.locator('.lar-result-card')).toBeVisible();
+});
+
+test('NO: solsystemet med ordningsfrågor går att göra klart', async ({ page }) => {
+  await page.goto('/lar/amne/no');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('NO');
+  await page.locator('.lar-row', { hasText: 'Solsystemet' }).click();
+  await playRunner(page);
+  await expect(page.locator('.lar-result-card')).toBeVisible();
 });

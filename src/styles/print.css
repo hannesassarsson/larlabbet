@@ -672,3 +672,42 @@
   width: 44mm;
   height: 44mm;
 }
+
+/* Läsförståelse på papper */
+.ws-reading {
+  display: block;
+}
+.ws-reading + .ws-reading {
+  margin-top: 6mm;
+}
+.ws-passage {
+  padding: 4mm 5mm;
+  border: 0.35mm solid var(--p-line);
+  border-radius: 2.5mm;
+  font-size: 1.08em;
+  line-height: 1.55;
+  margin-bottom: 4mm;
+  break-inside: avoid;
+}
+.paper.big .ws-passage {
+  font-size: 1em;
+}
+.ws-passage h3 {
+  font-size: 1.15em;
+  font-weight: 900;
+  margin-bottom: 2mm;
+}
+.ws-passage p + p {
+  margin-top: 2mm;
+}
+.ws-passage-line {
+  display: block;
+}
+.ws-passage.genre-schema .ws-passage-line {
+  white-space: pre-wrap;
+  font-variant-numeric: tabular-nums;
+}
+.layout-reading .ws-items {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3.5mm;
+}

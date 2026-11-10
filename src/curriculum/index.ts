@@ -1,6 +1,8 @@
 import { ENGELSKA_ACTIVITIES } from './engelska';
+import { LASNING_ACTIVITIES } from './lasning';
 import { MATH_ACTIVITIES } from './matematik';
 import { SO_ACTIVITIES } from './so';
+import { NO_ACTIVITIES } from './no';
 import { SVENSKA_ACTIVITIES } from './svenska';
 import { PICTURES } from '../components/pictures';
 import { buildRound, displayLetter, type Level as LetterLevel } from '../games/bokstavsjakten/logic';
@@ -57,8 +59,10 @@ const GAME_ACTIVITIES: Activity[] = [
 export const ACTIVITIES: Activity[] = [
   ...MATH_ACTIVITIES,
   ...SVENSKA_ACTIVITIES,
+  ...LASNING_ACTIVITIES,
   ...ENGELSKA_ACTIVITIES,
   ...SO_ACTIVITIES,
+  ...NO_ACTIVITIES,
   ...GAME_ACTIVITIES,
 ];
 

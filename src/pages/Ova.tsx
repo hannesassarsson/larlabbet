@@ -19,6 +19,18 @@ export function OvaLibrary({ grade: initialGrade, subject: initialSubject }: { g
     for (const a of list) m.set(a.area, [...(m.get(a.area) ?? []), a]);
     return [...m.entries()].sort((x, y) => subj.areas.indexOf(x[0]) - subj.areas.indexOf(y[0]));
   }, [list, subj]);
+  const flat = byArea.length > 1 && list.length / byArea.length < 1.5;
+  const card = (a: (typeof list)[number], showArea: boolean) => (
+    <Link key={a.id} to={a.game ? `/spel/${a.game}` : `/ova/${a.id}`} className="card activity-card" style={{ ['--subject' as string]: subj.color, ['--subject-soft' as string]: subj.soft }}>
+      <span className="activity-grades">åk {gradeRange(a.grades)}</span>
+      <b>{a.title}</b>
+      <span className="muted">{a.description}</span>
+      {showArea && <span className="activity-area">{a.area.replace(/\s*\(åk [^)]*\)/, '')}</span>}
+      <span className="activity-go" aria-hidden="true">
+        <IconPlay />
+      </span>
+    </Link>
+  );
 
   return (
     <PortalShell title="Öva skolämnen" kicker="Förskoleklass till årskurs 3" back="/lek">
@@ -42,22 +54,16 @@ export function OvaLibrary({ grade: initialGrade, subject: initialSubject }: { g
       </div>
       {byArea.length === 0 ? (
         <p className="notice">Här finns inga övningar för den årskursen. {subject === 'engelska' && grade === 0 ? 'Engelska börjar i årskurs 1.' : ''}</p>
+      ) : flat ? (
+        // Nästan bara en övning per område: ett rutnät, med området på kortet.
+        <section className="area-section">
+          <div className="activity-grid">{list.map((a) => card(a, true))}</div>
+        </section>
       ) : (
         byArea.map(([area, acts]) => (
           <section key={area} className="area-section">
             <h2 className="area-title">{area}</h2>
-            <div className="activity-grid">
-              {acts.map((a) => (
-                <Link key={a.id} to={a.game ? `/spel/${a.game}` : `/ova/${a.id}`} className="card activity-card" style={{ ['--subject' as string]: subj.color, ['--subject-soft' as string]: subj.soft }}>
-                  <span className="activity-grades">åk {gradeRange(a.grades)}</span>
-                  <b>{a.title}</b>
-                  <span className="muted">{a.description}</span>
-                  <span className="activity-go" aria-hidden="true">
-                    <IconPlay />
-                  </span>
-                </Link>
-              ))}
-            </div>
+            <div className="activity-grid">{acts.map((a) => card(a, false))}</div>
           </section>
         ))
       )}

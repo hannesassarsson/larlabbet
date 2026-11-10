@@ -1,6 +1,6 @@
 import { LogoMark } from '../components/Logo';
 import { levelLabel } from '../curriculum';
-import { gradeLong, subjectOf, type ChoiceQuestion } from '../curriculum/types';
+import { gradeLong, subjectOf, type ChoiceQuestion, type Passage } from '../curriculum/types';
 import { VisualView } from '../play/VisualView';
 import { facitFor, promptParts, type PrintItem, type PrintSection, type PrintSheet, type SheetConfig } from './worksheet';
 
@@ -109,6 +109,42 @@ function Item({ it, n }: { it: PrintItem; n: number }) {
   );
 }
 
+/** Läsförståelse: texten skrivs ut en gång, följd av frågorna om den. */
+function ReadingSection({ s, start }: { s: PrintSection; start: number }) {
+  const groups: { passage: Passage; items: { it: PrintItem; n: number }[] }[] = [];
+  s.items.forEach((it, i) => {
+    const p = (it.q as ChoiceQuestion).passage!;
+    const last = groups[groups.length - 1];
+    if (last && last.passage.id === p.id) last.items.push({ it, n: start + i });
+    else groups.push({ passage: p, items: [{ it, n: start + i }] });
+  });
+  return (
+    <>
+      {groups.map((g) => (
+        <div key={g.passage.id + g.items[0].n} className="ws-reading">
+          <div className={`ws-passage genre-${g.passage.genre.replace(/\s+/g, '-')}`}>
+            <h3>{g.passage.title}</h3>
+            {g.passage.text.split(/\n\s*\n/).map((para, i) => (
+              <p key={i}>
+                {para.split('\n').map((line, k) => (
+                  <span key={k} className="ws-passage-line">
+                    {line}
+                  </span>
+                ))}
+              </p>
+            ))}
+          </div>
+          <ol className="ws-items">
+            {g.items.map(({ it, n }) => (
+              <Item key={n} it={it} n={n} />
+            ))}
+          </ol>
+        </div>
+      ))}
+    </>
+  );
+}
+
 function Section({ s, start }: { s: PrintSection; start: number }) {
   const subject = subjectOf(s.activity.subject);
   if (s.problem) {
@@ -136,7 +172,9 @@ function Section({ s, start }: { s: PrintSection; start: number }) {
         <h2>{s.heading}</h2>
         <p>{s.instruction}</p>
       </header>
-      {s.layout === 'glosor' ? (
+      {s.layout === 'reading' ? (
+        <ReadingSection s={s} start={start} />
+      ) : s.layout === 'glosor' ? (
         <ol className="ws-glosor" start={start}>
           {s.items.map((it, i) => (
             <li key={i}>
