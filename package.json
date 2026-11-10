@@ -6,11 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:demo": "tsc -b && vite build --mode demo",
     "preview": "vite preview --host",
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
     "icons": "python3 scripts/icons.py",
-    "build:preview": "VITE_HASH_ROUTER=1 vite build --base ./ --outDir dist-preview && python3 scripts/preview_page.py",
+    "build:preview": "VITE_HASH_ROUTER=1 vite build --mode demo --base ./ --outDir dist-preview && python3 scripts/preview_page.py",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
