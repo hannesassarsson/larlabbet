@@ -8,3 +8,4 @@ dist-preview
 test-results
 playwright-report
 blob-report
+.netlify

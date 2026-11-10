@@ -1,0 +1,8 @@
+# Netlify bygger appen från GitHub. Firebase-uppgifterna ligger i .env.production
+# (de är inte hemliga – skyddet är firestore.rules).
+[build]
+  command = "npm ci && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
