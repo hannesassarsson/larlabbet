@@ -100,6 +100,12 @@ export class FirebaseBackend implements Backend {
     onAuthStateChanged(this.auth, (u) => void this.resolve(u));
   }
 
+  /** Klassquizet använder samma Firebase-app. Loggar in anonymt om ingen är inloggad. */
+  async quizServices(): Promise<{ db: Firestore; uid: string }> {
+    const u = this.auth.currentUser ?? (await signInAnonymously(this.auth)).user;
+    return { db: this.db, uid: u.uid };
+  }
+
   private emit(s: Session | null) {
     this.current = s;
     this.ready = true;

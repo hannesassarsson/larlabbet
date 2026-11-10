@@ -1,0 +1,988 @@
+/* ================= Klassquiz =================
+   Egen scen för tavlan och plattorna: mörk bakgrund, stora siffror och fyra
+   svarsfärger med var sin form (triangel, romb, cirkel, kvadrat). */
+
+.qz {
+  --qz-bg: #1e1442;
+  --qz-bg2: #2f2170;
+  --qz-ink: #ffffff;
+  --qz-soft: rgba(255, 255, 255, 0.72);
+  --qz-card: #ffffff;
+  --qz-card-ink: #1e1442;
+  --a0: #e0463c;
+  --a1: #2b78d9;
+  --a2: #e8a400;
+  --a3: #22995a;
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  background: radial-gradient(120% 90% at 50% 0%, var(--qz-bg2), var(--qz-bg) 70%);
+  color: var(--qz-ink);
+  -webkit-overflow-scrolling: touch;
+}
+.qz h1 {
+  font-size: clamp(28px, 4.2vw, 48px);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.qz-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+}
+.qz.qz-center {
+  padding-inline: 24px;
+}
+.qz-kicker {
+  color: var(--qz-soft);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 15px;
+}
+.qz-wait {
+  color: var(--qz-soft);
+  font-weight: 700;
+  font-size: 19px;
+  animation: qz-breathe 1.8s ease-in-out infinite;
+}
+@keyframes qz-breathe {
+  50% {
+    opacity: 0.45;
+  }
+}
+.qz-error {
+  background: #ffe1dd;
+  color: #7a1a10;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin: 8px 0;
+  font-weight: 700;
+}
+
+/* ---------- Knappar ---------- */
+.qz-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 0 28px;
+  border-radius: 16px;
+  background: var(--qz-card);
+  color: var(--qz-card-ink);
+  font-weight: 900;
+  font-size: 20px;
+  text-decoration: none;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.28);
+  transition: transform 0.08s;
+}
+.qz-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.28);
+}
+.qz-btn.big {
+  min-height: 68px;
+  font-size: 24px;
+  padding: 0 40px;
+}
+.qz-btn.ghost {
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--qz-ink);
+  box-shadow: none;
+}
+.qz-btn:disabled {
+  opacity: 0.45;
+}
+.qz-link {
+  color: var(--qz-soft);
+  font-weight: 700;
+  text-decoration: underline;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.qz :focus-visible {
+  outline: 4px solid #ffd84d;
+  outline-offset: 3px;
+}
+
+/* ---------- Övre raden ---------- */
+.qz-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 48px;
+  font-weight: 800;
+}
+.qz-brand {
+  color: var(--qz-soft);
+}
+.qz-progress {
+  margin-inline: auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+}
+.qz-brand + .qz-code-small {
+  margin-left: auto;
+}
+.qz-code-small b {
+  font-size: 1.2em;
+  letter-spacing: 0.04em;
+}
+.qz-quit {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--qz-ink);
+  font-weight: 800;
+}
+.qz-me {
+  max-width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.qz-points {
+  margin-left: auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--qz-card);
+  color: var(--qz-card-ink);
+}
+.qz-me + .qz-progress {
+  margin-inline: auto;
+}
+
+/* ---------- Väntrummet ---------- */
+.qz-lobby {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto 1fr auto;
+  gap: 18px;
+  padding-top: 8px;
+}
+.qz-join {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 4vw, 48px);
+  padding: 20px clamp(20px, 4vw, 40px);
+  border-radius: 24px;
+  background: var(--qz-card);
+  color: var(--qz-card-ink);
+  text-align: center;
+}
+.qz-join .qz-kicker {
+  color: #6a5fa0;
+}
+.qz-url {
+  font-size: clamp(20px, 2.6vw, 30px);
+  font-weight: 900;
+  word-break: break-all;
+}
+.qz-code {
+  font-size: clamp(64px, 11vw, 132px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.qz-qr {
+  display: block;
+  width: clamp(120px, 16vw, 190px);
+  flex: none;
+}
+.qz-qr svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.qz-lobby-info {
+  text-align: center;
+}
+.qz-lobby-info h1 {
+  font-size: clamp(24px, 3vw, 34px);
+}
+.qz-lobby-info p {
+  color: var(--qz-soft);
+  font-weight: 700;
+}
+.qz-players {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.qz-players ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+}
+.qz-players li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 6px 6px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  font-weight: 800;
+  font-size: 20px;
+}
+.qz-kick {
+  background: transparent;
+  border: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: var(--qz-soft);
+  font-size: 22px;
+  line-height: 1;
+}
+.qz-kick:hover,
+.qz-kick:focus-visible {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+.qz-lobby-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.qz-count {
+  font-weight: 800;
+  font-size: 20px;
+}
+.qz-count b {
+  font-size: 34px;
+}
+
+/* ---------- Gör er redo ---------- */
+.qz-big-prompt {
+  max-width: 24ch;
+}
+.qz-count-ring {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 8px solid rgba(255, 255, 255, 0.18);
+  position: relative;
+}
+.qz-count-ring span {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 8px solid #fff;
+  clip-path: inset(0 0 0 0);
+  animation: qz-ring 3s linear forwards;
+}
+@keyframes qz-ring {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+
+/* ---------- Frågan på tavlan ---------- */
+.qz-question {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+}
+.qz-q-head {
+  padding: 16px 24px;
+  border-radius: 20px;
+  background: var(--qz-card);
+  color: var(--qz-card-ink);
+  text-align: center;
+}
+.qz-prompt {
+  font-size: clamp(24px, 3.4vw, 42px) !important;
+}
+.qz-detail {
+  margin-top: 6px;
+  font-size: clamp(20px, 2.4vw, 28px);
+  font-weight: 700;
+}
+.qz-q-middle {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) 120px;
+  align-items: center;
+  gap: 16px;
+  min-height: 120px;
+}
+.qz-visual {
+  justify-self: center;
+  display: grid;
+  place-items: center;
+  max-height: 100%;
+  padding: 14px;
+  border-radius: 20px;
+  background: var(--qz-card);
+  color: var(--qz-card-ink);
+}
+.qz-visual > * {
+  max-height: 30vh;
+}
+.qz-visual.small > * {
+  max-height: 18vh;
+}
+.qz-visual.empty {
+  visibility: hidden;
+}
+.qz-timer {
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--qz-card-ink);
+  font-size: 44px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.qz-timer.low {
+  background: #ffd84d;
+  animation: qz-pulse 1s ease-in-out infinite;
+}
+@keyframes qz-pulse {
+  50% {
+    transform: scale(1.08);
+  }
+}
+.qz-side-stat {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  font-weight: 800;
+  color: var(--qz-soft);
+}
+.qz-side-stat b {
+  font-size: 44px;
+  color: #fff;
+  line-height: 1;
+}
+.qz-timebar {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+}
+.qz-timebar span {
+  display: block;
+  height: 100%;
+  background: #fff;
+  border-radius: inherit;
+  transform-origin: left;
+  animation: qz-shrink linear forwards;
+}
+@keyframes qz-shrink {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+/* Svaren: samma färg och form på tavlan och plattorna. */
+.qz-answers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+}
+.qz-ans {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 84px;
+  padding: 14px 20px;
+  border-radius: 16px;
+  color: #fff;
+  font-weight: 900;
+  font-size: clamp(20px, 2.4vw, 30px);
+  text-align: left;
+  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.2);
+  transition:
+    opacity 0.3s,
+    transform 0.3s;
+}
+.qz-ans.a0,
+.qz-picked.a0,
+.qz-dist-col.a0 {
+  --c: var(--a0);
+}
+.qz-ans.a1,
+.qz-picked.a1,
+.qz-dist-col.a1 {
+  --c: var(--a1);
+}
+.qz-ans.a2,
+.qz-picked.a2,
+.qz-dist-col.a2 {
+  --c: var(--a2);
+}
+.qz-ans.a3,
+.qz-picked.a3,
+.qz-dist-col.a3 {
+  --c: var(--a3);
+}
+.qz-ans {
+  background: var(--c);
+}
+.qz-ans svg {
+  flex: none;
+}
+.qz-opt-visual {
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--qz-card-ink);
+}
+.qz-opt-visual > * {
+  max-height: 110px;
+  max-width: 160px;
+}
+.qz-opt-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.qz-answers.revealed .qz-ans.wrong {
+  opacity: 0.32;
+}
+.qz-answers.revealed .qz-ans.right {
+  transform: scale(1.02);
+  box-shadow:
+    inset 0 -6px 0 rgba(0, 0, 0, 0.2),
+    0 0 0 5px #fff;
+}
+.qz-check {
+  margin-left: auto;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--qz-card-ink);
+  font-size: 16px;
+  white-space: nowrap;
+}
+.qz-explain {
+  text-align: center;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--qz-soft);
+}
+.qz-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+.qz-question .qz-actions {
+  justify-content: flex-end;
+}
+
+/* Fördelning av klassens svar */
+.qz-dist {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 18px;
+}
+.qz-dist-col {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: 72px;
+  color: #fff;
+}
+.qz-dist-n {
+  font-size: 26px;
+  font-weight: 900;
+}
+.qz-dist-bar {
+  width: 100%;
+  border-radius: 10px 10px 4px 4px;
+  background: var(--c);
+  transition: height 0.5s ease-out;
+}
+.qz-dist-col:not(.right) .qz-dist-bar {
+  opacity: 0.45;
+}
+
+/* ---------- Ställning ---------- */
+.qz-board {
+  display: grid;
+  gap: 10px;
+  width: min(760px, 100%);
+  list-style: none;
+  padding: 0;
+}
+.qz-board li {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px;
+  border-radius: 16px;
+  background: var(--qz-card);
+  color: var(--qz-card-ink);
+  font-weight: 900;
+  font-size: 24px;
+  text-align: left;
+}
+.qz-rank {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--qz-bg2);
+  color: #fff;
+  font-size: 20px;
+}
+.qz-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.qz-name small {
+  font-size: 14px;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.qz-streak {
+  background: #fff1c2;
+  color: #7a4d00;
+}
+.qz-up {
+  background: #d8f5e2;
+  color: #145c32;
+}
+.qz-gain {
+  color: #22995a;
+  font-size: 18px;
+}
+.qz-score {
+  font-variant-numeric: tabular-nums;
+}
+.slide-in {
+  animation: qz-slide 0.35s ease-out both;
+}
+.slide-in:nth-child(2) {
+  animation-delay: 0.06s;
+}
+.slide-in:nth-child(3) {
+  animation-delay: 0.12s;
+}
+.slide-in:nth-child(4) {
+  animation-delay: 0.18s;
+}
+.slide-in:nth-child(5) {
+  animation-delay: 0.24s;
+}
+@keyframes qz-slide {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+/* ---------- Pallen ---------- */
+.qz-end {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding-top: 12px;
+  text-align: center;
+}
+.qz-podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 14px;
+  width: min(720px, 100%);
+}
+.qz-step {
+  flex: 1;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.qz-step-name {
+  font-size: clamp(20px, 2.6vw, 30px);
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+.qz-step-score {
+  color: var(--qz-soft);
+  font-weight: 800;
+}
+.qz-step-block {
+  display: grid;
+  place-items: start center;
+  width: 100%;
+  padding-top: 12px;
+  border-radius: 16px 16px 0 0;
+  background: var(--qz-card);
+  color: var(--qz-card-ink);
+  font-size: 48px;
+  font-weight: 900;
+  animation: qz-rise 0.7s ease-out both;
+  transform-origin: bottom;
+}
+.qz-step.p1 .qz-step-block {
+  height: 200px;
+  background: #ffd84d;
+}
+.qz-step.p2 .qz-step-block {
+  height: 150px;
+  animation-delay: 0.25s;
+}
+.qz-step.p3 .qz-step-block {
+  height: 110px;
+  background: #f1d2b6;
+  animation-delay: 0.45s;
+}
+@keyframes qz-rise {
+  from {
+    transform: scaleY(0);
+  }
+}
+.qz-summary {
+  width: min(900px, 100%);
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--qz-card);
+  color: var(--qz-card-ink);
+  text-align: left;
+}
+.qz-summary > p {
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+.qz-summary ol {
+  display: grid;
+  gap: 6px;
+  list-style: none;
+  padding: 0;
+}
+.qz-summary li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f1eefb;
+}
+.qz-summary li.hard {
+  background: #ffe9e6;
+}
+.qz-sum-bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--share) * 100%);
+  background: rgba(34, 153, 90, 0.16);
+}
+.qz-sum-text {
+  position: relative;
+  flex: 1;
+  font-weight: 700;
+}
+.qz-sum-text small {
+  display: block;
+  color: #5d5680;
+}
+.qz-summary b {
+  position: relative;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Elevens platta ---------- */
+.qz-join-form {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  width: min(440px, 100%);
+}
+.qz-join-form label {
+  font-weight: 800;
+  color: var(--qz-soft);
+}
+.qz-code-input,
+.qz-name-input {
+  width: 100%;
+  min-height: 72px;
+  border-radius: 18px;
+  border: 0;
+  background: #fff;
+  color: var(--qz-card-ink);
+  text-align: center;
+  font-size: 34px;
+  font-weight: 900;
+}
+.qz-code-input {
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+.qz-device-prompt {
+  font-size: clamp(22px, 3.2vw, 32px);
+  font-weight: 900;
+  max-width: 30ch;
+  margin-inline: auto;
+}
+.qz-pick {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+.qz-pick-head {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.qz-pick-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: minmax(110px, 1fr);
+  gap: 12px;
+}
+.qz-pick-grid .qz-ans {
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  font-size: clamp(20px, 3vw, 30px);
+}
+.qz-picked {
+  display: grid;
+  place-items: center;
+  width: 120px;
+  height: 120px;
+  border-radius: 28px;
+  background: var(--c);
+  color: #fff;
+}
+.qz-result.right {
+  --flash: #22995a;
+}
+.qz-result.wrong {
+  --flash: #e0463c;
+}
+.qz-result h1 {
+  padding: 10px 28px;
+  border-radius: 20px;
+  background: var(--flash);
+  animation: qz-pop 0.35s ease-out both;
+}
+@keyframes qz-pop {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+}
+.qz-gained {
+  font-size: 30px;
+  font-weight: 900;
+}
+.qz-right-was {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
+}
+.qz-player .qz-streak {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-weight: 900;
+}
+.qz-place {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--qz-soft);
+}
+.qz-place b {
+  color: #fff;
+  font-size: 1.4em;
+}
+
+/* Smalare skärmar och stående läge */
+@media (max-width: 860px), (orientation: portrait) {
+  .qz-q-middle {
+    grid-template-columns: 96px minmax(0, 1fr) 96px;
+  }
+  .qz-timer {
+    width: 84px;
+    height: 84px;
+    font-size: 36px;
+  }
+  .qz-join {
+    flex-direction: column;
+  }
+}
+@media (max-width: 560px) {
+  .qz-answers,
+  .qz-pick-grid.n2,
+  .qz-pick-grid.n3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .qz-bar .qz-brand {
+    display: none;
+  }
+}
+
+/* ---------- Inställningssidan (lärare) ---------- */
+.qz-setup {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .qz-setup {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.qz-setup-form {
+  display: grid;
+  gap: 18px;
+}
+.qz-acts {
+  display: grid;
+  gap: 10px;
+  margin: 8px 0;
+  max-height: 360px;
+  overflow-y: auto;
+}
+.qz-act-group h3 {
+  font-size: 15px;
+  font-weight: 900;
+  margin-bottom: 6px;
+  padding-left: 8px;
+  border-left: 5px solid var(--subject);
+}
+.qz-act-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.qz-preview {
+  display: grid;
+  gap: 12px;
+  position: sticky;
+  top: 12px;
+}
+.qz-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.qz-qlist {
+  display: grid;
+  gap: 6px;
+  padding-left: 1.4em;
+}
+.qz-qlist li {
+  padding: 4px 0;
+  border-bottom: 1px solid var(--line, #e7e3dc);
+}
+.qz-qlist li > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 8px;
+}
+.qz-qlist li > div > span {
+  font-weight: 700;
+}
+.qz-qlist small {
+  display: block;
+  font-weight: 600;
+  color: var(--ink-soft, #666);
+}
+.qz-qlist .icon-btn {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  font-size: 22px;
+}
+.qz-start {
+  width: 100%;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Tidsstapeln är information, inte dekoration, så den får fortsätta krympa. */
+  .qz *:not(.qz-timebar > span) {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Fråga utan bild: frågan får ta plats mitt på tavlan. */
+.qz-question.no-visual .qz-q-head {
+  flex: 1;
+  display: grid;
+  place-content: center;
+}
+.qz-question.no-visual .qz-prompt {
+  font-size: clamp(30px, 4.6vw, 60px) !important;
+  max-width: 26ch;
+  margin-inline: auto;
+}
+.qz-question.no-visual .qz-q-middle {
+  flex: none;
+  min-height: 110px;
+}
+.qz-answers.n3 > :last-child,
+.qz-pick-grid.n3 > :last-child {
+  grid-column: 1 / -1;
+}

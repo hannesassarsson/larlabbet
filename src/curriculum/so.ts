@@ -74,6 +74,58 @@ const TID_OCH_KALLOR: Fact[] = [
   { q: 'Vad är nutid?', a: 'Det som händer just nu', w: ['Det som hände förra året', 'Det som händer om hundra år'], e: 'Dåtid, nutid och framtid.' },
 ];
 
+
+/* ---------- Åk F–3: närområdet, kartan och högtider ---------- */
+
+const TILLSAMMANS: Fact[] = [
+  { q: 'Vad är en regel?', a: 'Något man har bestämt att alla ska följa', w: ['En lek man hittar på själv', 'Ett sätt att räkna'], e: 'Regler gör att alla vet vad som gäller.' },
+  { q: 'Varför finns det regler i skolan?', a: 'För att alla ska känna sig trygga', w: ['För att det ska bli tråkigt', 'För att bara vuxna ska bestämma'], e: 'Reglerna gäller både barn och vuxna.' },
+  { q: 'Vilken gubbe ska lysa i trafikljuset när du går över gatan?', a: 'Den gröna', w: ['Den röda', 'Den gula'], e: 'Titta ändå åt båda hållen innan du går.' },
+  { q: 'Vad ska du ha på huvudet när du cyklar?', a: 'Cykelhjälm', w: ['Badmössa', 'Solglasögon'], e: 'Hjälmen skyddar huvudet om du ramlar.' },
+  { q: 'Vad gör att bilister ser dig när du går ute i mörkret?', a: 'En reflex', w: ['Mörka kläder', 'En keps'], e: 'Med reflex syns du på långt håll i billjuset.' },
+  { q: 'Vilket nummer ringer man vid brand, olycka eller annan akut fara?', a: '112', w: ['114 14', '1177'], e: '114 14 är till polisen när det inte är bråttom. 1177 är sjukvårdsrådgivning.' },
+  { q: 'Vilket yrke släcker bränder och räddar människor?', a: 'Brandman', w: ['Bagare', 'Frisör'], e: 'Brandmän kallas också räddningstjänst.' },
+  { q: 'Var kan man låna böcker gratis?', a: 'På biblioteket', w: ['I mataffären', 'På bensinmacken'], e: 'Biblioteket är till för alla.' },
+  { q: 'Klassen ska bestämma vad ni ska leka. Vilket sätt är rättvist?', a: 'Alla får rösta', w: ['Den som skriker högst bestämmer', 'Den äldsta bestämmer'], e: 'När alla får vara med och bestämma kallas det demokrati.' },
+  { q: 'Vad gör du om du ser att någon blir retad?', a: 'Säger till en vuxen', w: ['Skrattar med', 'Låtsas att du inte såg'], e: 'Alla har rätt att känna sig trygga.' },
+  { q: 'Var ska man gå när det inte finns någon trottoar?', a: 'Längst ut till vänster, mot trafiken', w: ['Mitt på vägen', 'Till höger, med trafiken'], e: 'Då ser du bilarna som kommer emot dig.' },
+  { q: 'Vad betyder det att alla barn har rättigheter?', a: 'Alla barn ska få skydd, lek, skola och bli lyssnade på', w: ['Barn får göra vad de vill', 'Bara vuxna har rättigheter'], e: 'Det står i barnkonventionen.' },
+  { q: 'Vem sköter skolor, lekplatser och sophämtning där du bor?', a: 'Kommunen', w: ['Kungen', 'Grannen'], e: 'Kommunen får pengar från skatten.' },
+  { q: 'Vad är pengar till för?', a: 'Att betala för saker man köper', w: ['Att leka med', 'Att elda med'], e: 'I Sverige betalar man med kronor.' },
+];
+
+const KARTAN: Fact[] = [
+  { q: 'Vilka är de fyra väderstrecken?', a: 'Norr, söder, öster och väster', w: ['Upp, ner, fram och bak', 'Höger, vänster, upp och ner'], e: 'På en karta är norr oftast uppåt.' },
+  { q: 'Hur visar en karta en plats?', a: 'Som om man tittar ner uppifrån', w: ['Som en bild tagen från marken', 'Med ljud och musik'], e: 'En karta är en bild av verkligheten sedd ovanifrån, fast mindre.' },
+  { q: 'Vilket land ligger väster om Sverige?', a: 'Norge', w: ['Finland', 'Polen'], e: 'Norge och Sverige har en lång gräns i fjällen.' },
+  { q: 'Vilket land ligger öster om Sverige?', a: 'Finland', w: ['Norge', 'Island'], e: 'Mellan Sverige och Finland ligger Bottenviken.' },
+  { q: 'Vilket land kommer man till över Öresundsbron från Malmö?', a: 'Danmark', w: ['Norge', 'Tyskland'], e: 'Bron går till Köpenhamn.' },
+  { q: 'Vad heter Sveriges huvudstad?', a: 'Stockholm', w: ['Göteborg', 'Malmö'], e: 'Där finns riksdagen och regeringen.' },
+  { q: 'Vilken färg har sjöar och hav oftast på en karta?', a: 'Blå', w: ['Röd', 'Svart'], e: 'Skog är ofta grön och vägar röda eller gula.' },
+  { q: 'Vad kallas de små bilderna på en karta som betyder något, till exempel en kyrka?', a: 'Kartsymboler', w: ['Frimärken', 'Stämplar'], e: 'Vad symbolerna betyder står i en ruta på kartan.' },
+  { q: 'Vad är en jordglob?', a: 'En modell av jorden', w: ['En sorts lampa', 'En stjärna'], e: 'Jordgloben är rund, precis som jorden.' },
+  { q: 'I vilken världsdel ligger Sverige?', a: 'Europa', w: ['Asien', 'Afrika'], e: 'Sverige ligger i norra Europa.' },
+  { q: 'Hur många världsdelar brukar man säga att det finns?', a: 'Sju', w: ['Tre', 'Tjugo'], e: 'Europa, Asien, Afrika, Nordamerika, Sydamerika, Oceanien och Antarktis.' },
+  { q: 'Vilka färger har Sveriges flagga?', a: 'Blå och gul', w: ['Röd och vit', 'Grön och gul'], e: 'Danmarks flagga är röd och vit.' },
+  { q: 'Finns det mest land eller vatten på jorden?', a: 'Vatten', w: ['Land', 'Lika mycket av båda'], e: 'Ungefär två tredjedelar av jorden är täckt av vatten.' },
+];
+
+const HOGTIDER: Fact[] = [
+  { q: 'Vad firar kristna på julen?', a: 'Att Jesus föddes', w: ['Att Jesus uppstod', 'Att våren kommer'], e: 'Julen firas i december.' },
+  { q: 'Vad firar kristna på påsken?', a: 'Att Jesus uppstod från de döda', w: ['Att Jesus föddes', 'Att skolan slutar'], e: 'Påsken firas på våren.' },
+  { q: 'Vilken högtid firas med ljus och sång den 13 december?', a: 'Lucia', w: ['Midsommar', 'Valborg'], e: 'Luciatåget går i ljusets tecken mitt i mörka vintern.' },
+  { q: 'Vad dansar många runt i juni, med blommor och kransar?', a: 'Midsommarstången', w: ['Julgranen', 'Brasan'], e: 'Midsommar firas när dagarna är som längst.' },
+  { q: 'Varför tänder man eldar på valborgsmässoafton?', a: 'För att välkomna våren', w: ['För att fira jul', 'För att skolan börjar'], e: 'Valborg firas den 30 april.' },
+  { q: 'Vad heter högtiden när muslimer firar att fastemånaden ramadan är slut?', a: 'Id al-fitr', w: ['Hanukka', 'Diwali'], e: 'Under ramadan fastar många muslimer när det är ljust ute.' },
+  { q: 'Vilken judisk högtid firas genom att tända ljus i åtta dagar?', a: 'Hanukka', w: ['Diwali', 'Lucia'], e: 'Ljusstaken till hanukka har plats för nio ljus.' },
+  { q: 'Vilken ljusfest firas inom hinduismen?', a: 'Diwali', w: ['Hanukka', 'Påsk'], e: 'Under diwali tänder man lampor och ljus.' },
+  { q: 'Vad heter kristendomens heliga skrift?', a: 'Bibeln', w: ['Koranen', 'Toran'], e: 'Toran är judendomens heliga skrift, Koranen islams.' },
+  { q: 'Vad heter islams heliga skrift?', a: 'Koranen', w: ['Bibeln', 'Toran'], e: 'Koranen är skriven på arabiska.' },
+  { q: 'Vad är en tradition?', a: 'Något man gör på samma sätt år efter år', w: ['Något helt nytt man hittar på', 'En sorts maträtt'], e: 'Att äta tårta på födelsedagen är en tradition.' },
+  { q: 'Vilken dag är Sveriges nationaldag?', a: 'Den 6 juni', w: ['Den 24 december', 'Den 1 maj'], e: 'Gustav Vasa valdes till kung den 6 juni 1523.' },
+  { q: 'Vad firar man på nyårsafton?', a: 'Att ett nytt år börjar', w: ['Att sommaren börjar', 'Att någon fyller år'], e: 'Vid tolvslaget börjar det nya året.' },
+];
+
 /* ---------- Åk 4–6: historia ---------- */
 
 const NORDEN_800_1500: Fact[] = [
@@ -209,6 +261,9 @@ const tidslinje: Activity = {
 };
 
 export const SO_ACTIVITIES: Activity[] = [
+  factActivity('so-tillsammans', 'Att leva tillsammans', 'Regler, trafik, rättigheter och vem som gör vad där vi bor.', [0, 3], 'Att leva i närområdet (åk 1–3)', TILLSAMMANS),
+  factActivity('so-kartan', 'Kartan och grannländerna', 'Väderstreck, kartsymboler, Norden och världsdelarna.', [1, 3], 'Att leva i världen (åk 1–3)', KARTAN),
+  factActivity('so-hogtider', 'Högtider och traditioner', 'Jul, påsk, lucia, midsommar och högtider i olika religioner.', [0, 3], 'Att leva i världen (åk 1–3)', HOGTIDER),
   factActivity('so-forntiden', 'Stenålder till järnålder', 'Hur levde människorna i Norden för mycket länge sedan?', [1, 3], 'Att leva i världen (åk 1–3)', FORNTIDEN),
   factActivity('so-mytologi', 'Nordisk mytologi', 'Tor, Oden, Loke och världsträdet Yggdrasil.', [2, 4], 'Att leva i världen (åk 1–3)', MYTOLOGI),
   factActivity('so-forr-och-nu', 'Förr och nu', 'Dåtid, nutid, framtid – och hur man vet hur det var förr.', [0, 3], 'Att undersöka verkligheten (åk 1–3)', TID_OCH_KALLOR),

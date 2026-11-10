@@ -47,6 +47,9 @@ function LarHeader({ back }: { back?: string }) {
         <Link to="/arbetsblad" className="lar-nav-link">
           Arbetsblad
         </Link>
+        <Link to="/quiz" className="lar-nav-link">
+          Klassquiz
+        </Link>
         <Link to="/skola" className="lar-nav-link">
           Lärare och föräldrar
         </Link>
@@ -201,6 +204,10 @@ export function LarHome() {
       <section className="lar-section lar-adults" aria-labelledby="adults-h">
         <h2 id="adults-h">För lärare och föräldrar</h2>
         <div className="lar-tools">
+          <Link to="/quiz" className="card lar-tool">
+            <b>Klassquiz</b>
+            <span>Hela klassen svarar samtidigt med en kod.</span>
+          </Link>
           <Link to="/arbetsblad" className="card lar-tool">
             <b>Arbetsblad</b>
             <span>Skriv ut övningar med facit.</span>

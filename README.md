@@ -17,14 +17,14 @@ utifrån klassens årskurs. Lärar-, föräldra- och arbetsbladssidorna använde
 
 ## Innehåll enligt kursplanen
 
-78 övningar, märkta med ämne, årskurs och område i Lgr22:s centrala innehåll:
+81 övningar, märkta med ämne, årskurs och område i Lgr22:s centrala innehåll:
 
 | Ämne | Övningar | Exempel |
 |---|---|---|
 | Matematik F–6 | 26 | räkna, talraden, klockan, bråk, gångertabellen, decimaltal, negativa tal, procent, ekvationer, area, vinklar, lägesmått, koordinater, lästal, mönster |
 | Svenska F–6 | 20 | läsförståelse (15 egna texter: berättelser, faktatexter, brev, instruktioner, tidtabell, argumenterande text), bokstavsljud, alfabetet, rim, stavning, stor bokstav och punkt, en/ett, plural, skiljetecken, ordklasser, verb i preteritum, sambandsord, sj-/tj-/j-ljud, texttyper |
 | Engelska 1–6 | 13 | tolv färdiga glosteman och lärarens egna glosor (svenska→engelska, engelska→svenska, stava). Det engelska ordet läses upp efter rätt svar |
-| SO F–6 | 9 | stenålder–järnålder, nordisk mytologi, förr och nu, tidslinjer, vikingatid–medeltid, Vasatiden och stormaktstiden, 1800-talet, geografi, samhället |
+| SO F–6 | 12 | att leva tillsammans, kartan och grannländerna, högtider och traditioner, stenålder–järnålder, nordisk mytologi, förr och nu, tidslinjer, vikingatid–medeltid, Vasatiden och stormaktstiden, 1800-talet, geografi, samhället |
 | NO F–6 | 10 | året runt i naturen, kroppen, material och vatten (flyta/sjunka), kraft, ljud och ljus, djurgrupper, ekologi och näringskedjor, människokroppen, el och energi (ledare/isolatorer), solsystemet, kemi i vardagen |
 
 Engelska börjar i årskurs 1 eftersom kursplanen inte omfattar förskoleklass.
@@ -46,6 +46,21 @@ För lärare och föräldrar som vill ha papper. Inget konto behövs.
 - Varje blad har ett **bladnummer**. Samma nummer ger exakt samma frågor, så bladet kan skrivas ut igen.
 - Blad kan sparas på enheten. Lärare kan skriva ut ett uppdrag direkt från klassens uppdragslista.
 - Utskriften är testad genom att skriva ut till PDF i Chrome. Safari på iPad är inte testad.
+
+## Klassquiz (`/quiz`)
+
+Hela klassen svarar samtidigt, som i ett tävlingsquiz. Läraren visar tavlan, eleverna går med på sina plattor.
+
+1. Läraren väljer ämne (eller alla ämnen), årskurs, gärna enskilda övningar, antal frågor (10–40) och tid per fråga.
+2. Frågorna kommer från samma övningar som resten av appen, så det blir nya frågor varje gång (**Nya frågor**). Läraren kan ta bort enskilda frågor innan start.
+3. Tavlan visar en sexsiffrig kod och en QR-kod. Eleverna går in på `/quiz/spela` eller skriver koden i samma ruta som elevkoden (**Jag har en kod**).
+4. Rätt svar ger 500–1000 poäng beroende på hur snabbt, plus bonus för flera rätt i rad. Efter varje fråga visas hur klassen svarade och ställningen.
+5. På slutet: pall, och resultat per fråga så att läraren ser vad klassen behöver gå igenom.
+
+- Svaren har fyra färger med var sin form, så att färgblinda också kan skilja dem åt.
+- Läraren kan ta bort en elev ur väntrummet, gå vidare med mellanslag eller en presentationsklicker, och ladda om tavlan utan att quizet försvinner.
+- **Utan Firebase (demoläget)** fungerar quizet bara mellan flikar i samma webbläsare på samma enhet. Det räcker för att prova och för testerna, inte för en klass.
+- **Med Firebase** går det via Firestore (`quizzes/{kod}`, se `firestore.rules`). Den delen är skriven men **inte provad mot ett riktigt Firebase-projekt**.
 
 ## Skolan: roller och behörigheter
 
@@ -153,7 +168,7 @@ installationen på hemskärmen ska fungera fullt ut (undantag: `localhost`).
 
 ```
 src/
-  curriculum/               kursplaneinnehåll: ämnen, årskurser, 78 övningar (generatorer och frågebanker)
+  curriculum/               kursplaneinnehåll: ämnen, årskurser, 81 övningar (generatorer och frågebanker)
   play/                     gemensam spelare för övningarna (flerval, ordning, stavning) och figurer
   backend/                  gränssnitt + demoläge (local.ts) + Firebase (firebase.ts)
   pages/skola, elev, larare, foralder   skoldelen

@@ -85,6 +85,9 @@ const ARSTIDER: Fact[] = [
   { q: 'Vad gör björnen på vintern?', a: 'Den sover i ett ide', w: ['Den flyttar till Afrika', 'Den simmar i havet'], e: 'Björnen äter mycket på hösten och sover sedan hela vintern.' },
   { q: 'Hur många årstider har vi i Sverige?', a: 'Fyra', w: ['Två', 'Tolv'], e: 'Vår, sommar, höst och vinter.' },
   { q: 'Varför vaknar insekterna på våren?', a: 'Det blir varmare', w: ['Det blir mörkare', 'Det börjar snöa'], e: 'Insekter behöver värme för att kunna röra sig.' },
+  { q: 'Vad bygger fåglarna på våren?', a: 'Bon till sina ägg', w: ['Snögrottor', 'Dammar'], e: 'I boet lägger fågeln ägg och tar hand om ungarna.' },
+  { q: 'Vad händer med dagarna när det blir vinter?', a: 'De blir kortare och mörkare', w: ['De blir längre och ljusare', 'De blir likadana'], e: 'Kortast är dagen runt den 21 december.' },
+  { q: 'Vilken frukt kan man plocka från träd i Sverige på hösten?', a: 'Äpplen', w: ['Bananer', 'Apelsiner'], e: 'Bananer och apelsiner växer i varmare länder.' },
 ];
 
 const KROPPEN: Fact[] = [
@@ -102,6 +105,9 @@ const KROPPEN: Fact[] = [
   { q: 'Varför är det bra att röra på sig?', a: 'Hjärtat och musklerna blir starkare', w: ['Man slipper sova', 'Man blir aldrig hungrig'], e: 'Rörelse gör kroppen stark och man mår bättre.' },
   { q: 'Vad ska man dricka mest av när man är törstig?', a: 'Vatten', w: ['Läsk', 'Saft'], e: 'Vatten släcker törsten utan socker.' },
   { q: 'Vad är det som slår när du känner pulsen?', a: 'Hjärtat', w: ['Lungorna', 'Magen'], e: 'Pulsen är hjärtats slag som känns i blodkärlen.' },
+  { q: 'Vad ser du med?', a: 'Ögonen', w: ['Öronen', 'Näsan'], e: 'Synen är ett av våra fem sinnen.' },
+  { q: 'Vad är bra mellanmål för kroppen?', a: 'Frukt och smörgås', w: ['Godis och läsk', 'Ingenting alls'], e: 'Kroppen behöver energi för att orka leka och lära sig.' },
+  { q: 'Vad händer med hjärtat när du springer fort?', a: 'Det slår snabbare', w: ['Det stannar', 'Det slår långsammare'], e: 'Musklerna behöver mer syre, så hjärtat pumpar fortare.' },
 ];
 
 const MATERIAL: Fact[] = [

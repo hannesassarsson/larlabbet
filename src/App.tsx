@@ -31,6 +31,11 @@ const Skola = page(() => import('./pages/skola/Skola'), (m) => m.default);
 const Arbetsblad = page(() => import('./pages/Arbetsblad'), (m) => m.default);
 const Hjalp = page(() => import('./pages/Hjalp'), (m) => m.default);
 const Installera = page(() => import('./pages/Installera'), (m) => m.default);
+const quizPlay = () => import('./pages/quiz/QuizPlay');
+const QuizSetup = page(() => import('./pages/quiz/QuizSetup'), (m) => m.default);
+const QuizHost = page(() => import('./pages/quiz/QuizHost'), (m) => m.default);
+const QuizJoin = page(quizPlay, (m) => m.QuizJoin);
+const QuizPlay = page(quizPlay, (m) => m.default);
 const GAME_COMPONENTS: Record<string, ComponentType<{ meta: GameMeta }>> = Object.fromEntries(
   ['memory', 'bokstavsjakten', 'stavning', 'matte', 'monster', 'santfalskt', 'malarladan'].map((id) => [id, page(games, (m) => m.GAMES[id])])
 );
@@ -80,6 +85,7 @@ const TITLES: [string, string][] = [
   ['/foralder', 'Förälder'],
   ['/ova', 'Öva ämnen'],
   ['/arbetsblad', 'Arbetsblad'],
+  ['/quiz', 'Klassquiz'],
   ['/in', 'Elev'],
 ];
 
@@ -90,7 +96,7 @@ function Routes() {
 
   // Utseende: Leklabbet (lek) eller Lärlabbet (lar). Elevsidorna väljer själva efter klassens årskurs.
   useLayoutEffect(() => {
-    if (path === '/elev' || path.startsWith('/elev/uppdrag')) return;
+    if (path === '/elev' || path.startsWith('/elev/uppdrag') || /^\/quiz\/\d{6}$/.test(path)) return;
     if (path === '/elev/logga-in' || path.startsWith('/in/')) setMode('lek');
     else if (path === '/' || path === '/start') setMode(getLastPart() ?? 'lar');
     else setMode(modeForPath(path));
@@ -132,6 +138,12 @@ function Routes() {
   if (path === '/foralder') return <ForalderHome />;
 
   if (path === '/arbetsblad') return <Arbetsblad />;
+
+  // Klassquiz
+  if (path === '/quiz') return <QuizSetup />;
+  if (path === '/quiz/vard') return <QuizHost />;
+  if (path === '/quiz/spela') return <QuizJoin />;
+  if ((m = match(path, '/quiz/:code')) && /^\d{6}$/.test(m.code)) return <QuizPlay key={m.code} code={m.code} />;
 
   // Övningar
   if (path === '/ova') return <OvaLibrary />;

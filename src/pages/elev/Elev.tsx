@@ -44,9 +44,11 @@ export function ElevLogin({ code }: { code?: string }) {
           <Avatar id="uggla" size={120} />
         </div>
         <div>
-          <p className="lead">Skriv koden som står på ditt kort. Du kan också skanna QR-koden på kortet med kameran.</p>
+          <p className="lead">Skriv koden som står på ditt kort. Du kan också skanna QR-koden på kortet med kameran. Ska du vara med i ett quiz? Skriv sifferkoden från tavlan.</p>
           {autoError && <p className="form-error">{autoError}</p>}
           <CodeForm label="Din kod" button="Logga in" onSubmit={async (c) => {
+            // Sex siffror är en quizkod från tavlan.
+            if (/^\d{6}$/.test(c)) return navigate(`/quiz/${c}`);
             await backend.studentSignIn(c);
             navigate('/elev', { replace: true });
           }} initial={code ?? ''} />

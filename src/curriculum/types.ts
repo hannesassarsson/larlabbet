@@ -175,6 +175,7 @@ export const SUBJECTS: Subject[] = [
     color: '#FFC53D',
     soft: '#FFF1C9',
     areas: [
+      'Att leva i närområdet (åk 1–3)',
       'Att leva i världen (åk 1–3)',
       'Att undersöka verkligheten (åk 1–3)',
       'Historia: Norden ca 800–1500',

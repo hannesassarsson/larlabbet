@@ -20,6 +20,8 @@ const PAGES = [
   '/foralder',
   '/elev/logga-in',
   '/arbetsblad',
+  '/quiz',
+  '/quiz/spela',
   '/installera',
   '/hjalp',
   '/spel/memory',
@@ -40,7 +42,8 @@ for (const path of PAGES) {
         .filter((el) => {
           const r = el.getBoundingClientRect();
           const s = getComputedStyle(el);
-          return r.width > 0 && r.height > 0 && s.visibility !== 'hidden' && r.height < 44;
+          // Halv pixels marginal: layouten kan ge t.ex. 43,99997 px för en knapp som är 44 px.
+          return r.width > 0 && r.height > 0 && s.visibility !== 'hidden' && r.height < 43.5;
         })
         .map((el) => `${el.tagName.toLowerCase()} "${(el.getAttribute('aria-label') || el.textContent || '').trim().slice(0, 30)}" ${Math.round(el.getBoundingClientRect().height)}px`)
     );
