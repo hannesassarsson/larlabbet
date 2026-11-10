@@ -96,7 +96,8 @@ export class FirebaseBackend implements Backend {
     const app = initializeApp(config);
     this.auth = getAuth(app);
     // Lokal cache gör att resultat kan sparas även när nätet är borta en stund.
-    this.db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
+    // ignoreUndefinedProperties: fält som saknar värde hoppas över i stället för att hela skrivningen avvisas.
+    this.db = initializeFirestore(app, { ignoreUndefinedProperties: true, localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
     onAuthStateChanged(this.auth, (u) => void this.resolve(u));
   }
 

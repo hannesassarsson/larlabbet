@@ -58,7 +58,11 @@ export async function rehostFirebase(code: string): Promise<HostLink> {
     const s = pending;
     pending = null;
     try {
-      await updateDoc(ref, { state: s, phase: s.phase, index: s.index, updatedAt: serverTimestamp() });
+      // JSON-rundan tar bort fält som är undefined – Firestore vägrar annars hela skrivningen.
+      const clean = JSON.parse(JSON.stringify(s)) as PublicState;
+      await updateDoc(ref, { state: clean, phase: s.phase, index: s.index, updatedAt: serverTimestamp() });
+    } catch (e) {
+      console.error('Kunde inte skicka quizläget', e);
     } finally {
       writing = false;
       void flush();
