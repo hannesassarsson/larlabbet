@@ -538,15 +538,22 @@ function WordListEditor({ backend, cls, list, onClose, onSaved }: { backend: Bac
   const [title, setTitle] = useState(list?.title ?? '');
   const [text, setText] = useState(list ? list.pairs.map((p) => `${p.sv} – ${p.en}`).join('\n') : '');
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   const pairs = useMemo(() => parseWordList(text), [text]);
-  const save = () =>
+  const save = () => {
+    // Låst medan det sparas, så att ett dubbeltryck inte skapar två listor.
+    setBusy(true);
     backend
       .saveWordList(cls.id, { id: list?.id, title: title.trim(), pairs })
       .then(() => {
         onSaved();
         onClose();
       })
-      .catch((e) => setError(errorText(e)));
+      .catch((e) => {
+        setError(errorText(e));
+        setBusy(false);
+      });
+  };
   return (
     <Overlay label="Glosor" onClose={onClose}>
       <h2>{list ? 'Ändra glosor' : 'Nya glosor'}</h2>
@@ -561,8 +568,8 @@ function WordListEditor({ backend, cls, list, onClose, onSaved }: { backend: Bac
       <p className="muted small">{pairs.length} glosor hittade. Du kan klistra in direkt från ett dokument eller kalkylark.</p>
       {error && <p className="form-error">{error}</p>}
       <div className="overlay-actions">
-        <button className="btn btn-big" onClick={save} disabled={!title.trim() || pairs.length < 2}>
-          <IconCheck /> Spara
+        <button className="btn btn-big" onClick={save} disabled={busy || !title.trim() || pairs.length < 2}>
+          <IconCheck /> {busy ? 'Sparar …' : 'Spara'}
         </button>
         {list && (
           <button className="btn btn-big btn-soft" onClick={() => backend.deleteWordList(cls.id, list.id).then(() => (onSaved(), onClose()))}>

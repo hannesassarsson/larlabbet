@@ -49,6 +49,8 @@ test('hela kedjan: lärare ger uppdrag, elev gör det, förälder och lärare se
     await page.fill('#wl-text', 'päron – pear\nplommon – plum\nvindruva – grape\ncitron – lemon');
     await expect(page.locator('.overlay-card')).toContainText('4 glosor');
     await page.getByRole('button', { name: 'Spara' }).click();
+    // Vänta tills listan är sparad (mot Firebase tar det en stund).
+    await expect(page.locator('.class-card', { hasText: 'Vecka 47 – frukter' })).toBeVisible();
   });
 
   await test.step('uppdrag med fyra övningar', async () => {
