@@ -9,6 +9,7 @@ import {
   type ChildLink,
   type ClassRoom,
   type Session,
+  type QuizResult,
   type Student,
   type StudentCodes,
   type WordListDoc,
@@ -33,12 +34,13 @@ interface DB {
   codes: Record<string, StudentCodes & { classId: string }>; // per studentId
   assignments: Assignment[];
   wordlists: WordListDoc[];
+  quizResults: QuizResult[];
   parentLinks: { uid: string; classId: string; studentId: string }[];
 }
 
 const KEY = 'demo-db';
 const SESSION_KEY = 'demo-session';
-const empty = (): DB => ({ users: [], classes: [], students: [], codes: {}, assignments: [], wordlists: [], parentLinks: [] });
+const empty = (): DB => ({ users: [], classes: [], students: [], codes: {}, assignments: [], wordlists: [], quizResults: [], parentLinks: [] });
 const id = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 
 async function hash(pw: string) {
@@ -240,6 +242,18 @@ export class LocalBackend implements Backend {
     this.teacherClass(db, classId);
     db.assignments = db.assignments.filter((a) => a.id !== aid);
     this.save(db);
+  }
+
+  async saveQuizResult(classId: string, r: Omit<QuizResult, 'id' | 'classId'>) {
+    const db = this.db();
+    this.teacherClass(db, classId);
+    db.quizResults = [...db.quizResults, { ...r, id: id(), classId }];
+    this.save(db);
+  }
+  async listQuizResults(classId: string) {
+    const db = this.db();
+    this.teacherClass(db, classId);
+    return db.quizResults.filter((q) => q.classId === classId).sort((a, b) => b.at - a.at);
   }
 
   async listWordLists(classId: string) {

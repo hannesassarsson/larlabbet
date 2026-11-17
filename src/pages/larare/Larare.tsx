@@ -10,6 +10,7 @@ import {
   type ClassRoom,
   type Student,
   type StudentCodes,
+  type QuizResult,
   type WordListDoc,
 } from '../../backend';
 import { ChoiceGroup, Overlay } from '../../components/GameShell';
@@ -138,14 +139,15 @@ export function KlassPage({ classId, tab }: { classId: string; tab?: string }) {
 
 function useClassData(backend: Backend, classId: string) {
   return useAsync(async () => {
-    const [cls, students, codes, assignments, wordlists] = await Promise.all([
+    const [cls, students, codes, assignments, wordlists, quizResults] = await Promise.all([
       backend.getClass(classId),
       backend.listStudents(classId),
       backend.getCodes(classId),
       backend.listAssignments(classId),
       backend.listWordLists(classId),
+      backend.listQuizResults(classId),
     ]);
-    return { cls, students, codes, assignments, wordlists };
+    return { cls, students, codes, assignments, wordlists, quizResults };
   }, [backend, classId]);
 }
 
@@ -163,7 +165,7 @@ function Klass({ backend, classId, tab }: { backend: Backend; classId: string; t
       </PortalShell>
     );
   }
-  const { cls, students, codes, assignments, wordlists } = data.data;
+  const { cls, students, codes, assignments, wordlists, quizResults } = data.data;
 
   return (
     <PortalShell
@@ -192,7 +194,7 @@ function Klass({ backend, classId, tab }: { backend: Backend; classId: string; t
       {tab === 'elever' && <StudentsTab backend={backend} cls={cls} students={students} codes={codes} reload={data.reload} />}
       {tab === 'uppdrag' && <AssignmentsTab backend={backend} cls={cls} students={students} assignments={assignments} wordlists={wordlists} reload={data.reload} />}
       {tab === 'glosor' && <WordListsTab backend={backend} cls={cls} lists={wordlists} reload={data.reload} />}
-      {tab === 'resultat' && <ResultsTab students={students} assignments={assignments} />}
+      {tab === 'resultat' && <ResultsTab students={students} assignments={assignments} quizResults={quizResults} />}
 
       {settings && <ClassSettings backend={backend} cls={cls} onClose={() => setSettings(false)} onSaved={data.reload} onDeleted={() => navigate('/larare')} />}
     </PortalShell>
@@ -583,14 +585,15 @@ function WordListEditor({ backend, cls, list, onClose, onSaved }: { backend: Bac
 
 /* ---------- Resultat ---------- */
 
-function ResultsTab({ students, assignments }: { students: Student[]; assignments: Assignment[] }) {
+function ResultsTab({ students, assignments, quizResults }: { students: Student[]; assignments: Assignment[]; quizResults: QuizResult[] }) {
   const [detail, setDetail] = useState<{ s: Student; a: Assignment } | null>(null);
   if (!students.length || !assignments.length) {
     return (
       <section className="tab-panel">
-        <Empty title="Inga resultat än">
+        <Empty title="Inga resultat från uppdrag än">
           <p>Resultaten visas här när eleverna har börjat på sina uppdrag.</p>
         </Empty>
+        <QuizResults results={quizResults} students={students} />
       </section>
     );
   }
@@ -656,6 +659,84 @@ function ResultsTab({ students, assignments }: { students: Student[]; assignment
             Stäng
           </button>
         </Overlay>
+      )}
+      <QuizResults results={quizResults} students={students} />
+    </section>
+  );
+}
+
+/** Sparade klassquiz: vem som deltog, poäng och vilka frågor klassen hade svårt för. */
+function QuizResults({ results, students }: { results: QuizResult[]; students: Student[] }) {
+  const alias = new Map(students.map((s) => [s.id, s.alias]));
+  return (
+    <section className="quiz-results" aria-labelledby="quiz-results-title">
+      <h2 id="quiz-results-title">Klassquiz</h2>
+      {results.length === 0 ? (
+        <p className="muted">
+          När du kör ett <Link to="/quiz">klassquiz</Link> och väljer den här klassen sparas resultatet här.
+        </p>
+      ) : (
+        results.map((r) => {
+          const total = r.questions.length;
+          const answers = r.players.length * total;
+          const share = answers ? r.players.reduce((n, p) => n + p.right, 0) / answers : 0;
+          const hard = r.questions.map((q, i) => ({ ...q, i, share: r.players.length ? q.right / r.players.length : 0 })).filter((q) => q.share < 0.5);
+          return (
+            <details key={r.id} className="card quiz-result">
+              <summary>
+                <b>{r.title}</b>
+                <span className="muted">
+                  {new Date(r.at).toLocaleDateString('sv-SE')} · {r.players.length} deltagare · {Math.round(share * 100)} % rätt
+                </span>
+              </summary>
+              <div className="table-wrap">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Plats</th>
+                      <th>Namn</th>
+                      <th>Rätt</th>
+                      <th>Poäng</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {r.players.map((p, k) => (
+                      <tr key={k}>
+                        <td>{p.rank}</td>
+                        <td>
+                          {p.studentId && alias.has(p.studentId) ? (
+                            <>
+                              <b>{alias.get(p.studentId)}</b> <span className="badge">elevkonto</span>
+                            </>
+                          ) : (
+                            p.name
+                          )}
+                        </td>
+                        <td>
+                          {p.right} av {total}
+                        </td>
+                        <td>{p.score}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <h3>{hard.length ? 'Frågor där färre än hälften hade rätt' : 'Mer än hälften hade rätt på alla frågor.'}</h3>
+              {hard.length > 0 && (
+                <ul className="detail-list">
+                  {hard.map((q) => (
+                    <li key={q.i}>
+                      <b>{q.prompt}</b>
+                      <span>
+                        Svar: {q.answer} · {Math.round(q.share * 100)} % rätt
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </details>
+          );
+        })
       )}
     </section>
   );

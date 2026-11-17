@@ -205,6 +205,8 @@ export interface PlayerAnswer {
 export interface Player {
   id: string;
   name: string;
+  /** Eleven var inloggad med sin elevkod i quizets klass. */
+  studentId?: string;
   score: number;
   streak: number;
   answers: Record<number, PlayerAnswer>;
@@ -225,10 +227,29 @@ export interface Game {
   players: Record<string, Player>;
   /** Placeringar före senaste frågan, för att visa vem som klättrat. */
   prevRanks: Record<string, number>;
+  /** Klassen som resultatet sparas på (läraren var inloggad). */
+  classId?: string;
+  className?: string;
+  /** Resultatet är sparat på klassen. */
+  saved?: boolean;
 }
 
-export function newGame(code: string, config: QuizConfig, questions: QuizQuestion[], title: string): Game {
-  return { code, grade: config.grade, title, questions, limitMs: config.seconds * 1000, showOnDevice: config.showOnDevice, phase: 'lobby', index: 0, step: 0, players: {}, prevRanks: {} };
+export function newGame(code: string, config: QuizConfig, questions: QuizQuestion[], title: string, cls?: { id: string; name: string }): Game {
+  return {
+    code,
+    grade: config.grade,
+    title,
+    questions,
+    limitMs: config.seconds * 1000,
+    showOnDevice: config.showOnDevice,
+    phase: 'lobby',
+    index: 0,
+    step: 0,
+    players: {},
+    prevRanks: {},
+    classId: cls?.id,
+    className: cls?.name,
+  };
 }
 
 export const NAME_MAX = 16;
@@ -245,13 +266,15 @@ export function activePlayers(g: Game): Player[] {
   return Object.values(g.players).filter((p) => !p.removed);
 }
 
-export function addPlayer(g: Game, id: string, rawName: string): Game {
+export function addPlayer(g: Game, id: string, rawName: string, studentId?: string): Game {
   const name = cleanName(rawName);
   if (!name) return g;
   const existing = g.players[id];
   if (existing?.removed) return g;
+  // Elevkopplingen gäller bara om quizet hör till en klass.
+  const sid = g.classId && studentId ? studentId : undefined;
   if (existing) return existing.name === name || g.phase !== 'lobby' ? g : { ...g, players: { ...g.players, [id]: { ...existing, name: uniqueName(g, name, id) } } };
-  return { ...g, players: { ...g.players, [id]: { id, name: uniqueName(g, name, id), score: 0, streak: 0, answers: {} } } };
+  return { ...g, players: { ...g.players, [id]: { id, name: uniqueName(g, name, id), studentId: sid, score: 0, streak: 0, answers: {} } } };
 }
 
 function uniqueName(g: Game, name: string, id: string) {
@@ -346,11 +369,37 @@ export function summary(g: Game) {
   });
 }
 
+/** Det som sparas på klassen när quizet är slut. */
+export function quizResultFrom(g: Game, at = Date.now()) {
+  const ranks = new Map(ranking(g).map((r) => [r.id, r.rank]));
+  return {
+    title: g.title,
+    at,
+    questions: summary(g).map((s) => ({
+      prompt: s.q.prompt + (s.q.detail ? ` ${s.q.detail}` : ''),
+      answer: s.q.options[s.q.answer].hideLabel ? `Svar ${s.q.answer + 1}` : s.q.options[s.q.answer].label,
+      right: s.right,
+      answered: s.answered,
+    })),
+    players: activePlayers(g)
+      .map((p) => ({
+        name: p.name,
+        ...(p.studentId ? { studentId: p.studentId } : {}),
+        score: p.score,
+        right: Object.values(p.answers).filter((a) => a.correct).length,
+        rank: ranks.get(p.id)!,
+      }))
+      .sort((a, b) => a.rank - b.rank),
+  };
+}
+
 /* ================= Det som skickas till eleverna ================= */
 
 /** Det eleverna får se. Rätt svar skickas först när frågan är avslutad. */
 export interface PublicState {
   code: string;
+  /** Klassen quizet hör till, så att inloggade elever kan kopplas till sitt elevkonto. */
+  classId?: string;
   grade: Grade;
   title: string;
   phase: Phase;
@@ -380,6 +429,7 @@ export function publicState(g: Game): PublicState {
   const { answer: ans, explain, ...rest } = q;
   return {
     code: g.code,
+    classId: g.classId,
     grade: g.grade,
     title: g.title,
     phase: g.phase,

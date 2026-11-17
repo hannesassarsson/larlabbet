@@ -9,7 +9,7 @@ import type { PublicState } from './game';
  * - Utan Firebase (demoläget): BroadcastChannel, alltså bara mellan flikar och
  *   fönster i samma webbläsare på samma enhet. Bra för att prova och för testerna.
  */
-export type PlayerMsg = { t: 'join'; pid: string; name: string } | { t: 'answer'; pid: string; index: number; choice: number; ms: number } | { t: 'leave'; pid: string };
+export type PlayerMsg = { t: 'join'; pid: string; name: string; studentId?: string } | { t: 'answer'; pid: string; index: number; choice: number; ms: number } | { t: 'leave'; pid: string };
 
 export interface HostLink {
   /** Läraren: skicka ut nytt läge till alla. */

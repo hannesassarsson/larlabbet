@@ -107,6 +107,19 @@ describe('förälder', () => {
   });
 });
 
+describe('sparade quizresultat', () => {
+  it('bara klassens lärare kan spara och läsa, och de kan inte ändras', async () => {
+    const r = { title: 'Quiz', at: 1, questions: [], players: [{ name: 'Alva', studentId: 's1', score: 900, right: 1, rank: 1 }] };
+    await assertSucceeds(setDoc(doc(teacher('t1'), 'classes/cA/quizResults/q1'), r));
+    await assertSucceeds(getDoc(doc(teacher('t1'), 'classes/cA/quizResults/q1')));
+    await assertFails(updateDoc(doc(teacher('t1'), 'classes/cA/quizResults/q1'), { title: 'Ändrad' }));
+    await assertFails(getDoc(doc(teacher('t2'), 'classes/cA/quizResults/q1')));
+    await assertFails(setDoc(doc(teacher('t2'), 'classes/cA/quizResults/q2'), r));
+    await assertFails(getDocs(collection(anon('u1'), 'classes/cA/quizResults')));
+    await assertFails(setDoc(doc(anon('u1'), 'classes/cA/quizResults/q3'), r));
+  });
+});
+
 describe('klassquiz', () => {
   it('går att slå upp med koden men inte lista', async () => {
     await assertSucceeds(getDoc(doc(anon('e1'), 'quizzes/123456')));
@@ -115,6 +128,8 @@ describe('klassquiz', () => {
   it('eleven svarar en gång på den öppna frågan', async () => {
     const db = anon('e1');
     await assertSucceeds(setDoc(doc(db, 'quizzes/123456/players/e1'), { name: 'Alva', at: 1 }));
+    await assertSucceeds(setDoc(doc(db, 'quizzes/123456/players/e1'), { name: 'Alva', at: 1, studentId: 's1' }));
+    await assertFails(setDoc(doc(db, 'quizzes/123456/players/e1'), { name: 'Alva', at: 1, studentId: 5 }));
     await assertSucceeds(setDoc(doc(db, 'quizzes/123456/answers/e1_2'), { pid: 'e1', index: 2, choice: 1, ms: 1500 }));
     await assertFails(setDoc(doc(db, 'quizzes/123456/answers/e1_2'), { pid: 'e1', index: 2, choice: 0, ms: 100 })); // ändra svar
     await assertFails(setDoc(doc(db, 'quizzes/123456/answers/e1_1'), { pid: 'e1', index: 1, choice: 1, ms: 100 })); // gammal fråga

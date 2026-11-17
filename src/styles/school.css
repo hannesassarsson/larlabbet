@@ -1487,3 +1487,49 @@ button.item-row:active {
   color: var(--ink-soft);
 }
 .area-section + p.muted.small { margin-top: 20px; }
+
+/* Sparade klassquiz under klassens Resultat */
+.quiz-results {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
+}
+.quiz-results > h2 {
+  font-size: 22px;
+}
+.quiz-result {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  overflow: hidden;
+}
+.quiz-result > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  min-height: 56px;
+  padding: 14px 18px;
+  cursor: pointer;
+}
+.quiz-result[open] > summary {
+  border-bottom: 1px solid var(--line);
+}
+.quiz-result > :not(summary) {
+  margin-inline: 18px;
+}
+.quiz-result > :last-child {
+  margin-bottom: 18px;
+}
+.quiz-result h3 {
+  font-size: 17px;
+}
+.badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--accent-soft, #e3f3f0);
+  font-size: 12px;
+  font-weight: 800;
+  vertical-align: middle;
+}

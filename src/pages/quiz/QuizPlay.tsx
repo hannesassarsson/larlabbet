@@ -5,9 +5,26 @@ import { Link, useRouter } from '../../lib/router';
 import { VisualView } from '../../play/VisualView';
 import { cleanName, formatQuizCode, funName, isQuizCode, NAME_MAX, type PublicState } from '../../quiz/game';
 import { joinQuiz, type PlayerLink } from '../../quiz/link';
+import { useBackend } from '../../backend';
 import { ANSWER_NAMES, OptionContent, Shape, TimeBar } from './parts';
 
 const nameKey = (code: string) => `larlabbet-quiz-namn-${code}`;
+const studentKey = (code: string) => `larlabbet-quiz-elev-${code}`;
+function remember(code: string, name: string, studentId?: string) {
+  try {
+    sessionStorage.setItem(nameKey(code), name);
+    if (studentId) sessionStorage.setItem(studentKey(code), studentId);
+  } catch {
+    /* fungerar ändå */
+  }
+}
+function savedStudent(code: string) {
+  try {
+    return sessionStorage.getItem(studentKey(code)) ?? undefined;
+  } catch {
+    return undefined;
+  }
+}
 function savedName(code: string) {
   try {
     return sessionStorage.getItem(nameKey(code)) ?? '';
@@ -73,7 +90,7 @@ export default function QuizPlay({ code }: { code: string }) {
         setState(s);
         off = l.onState((st) => alive && setState(st));
         const n = savedName(code);
-        if (n) l.send({ t: 'join', pid: l.pid, name: n });
+        if (n) l.send({ t: 'join', pid: l.pid, name: n, studentId: savedStudent(code) });
       })
       .catch((e: Error) => alive && setError(e.message || 'Kunde inte ansluta.'));
     return () => {
@@ -90,6 +107,28 @@ export default function QuizPlay({ code }: { code: string }) {
 
   const pid = link.current?.pid ?? '';
   const me = state?.players[pid];
+
+  // Inloggad elev i quizets klass: gå med automatiskt med sitt namn, kopplat till elevkontot.
+  const { backend, session } = useBackend();
+  const student = session?.role === 'student' && state?.classId && session.classId === state.classId ? session : null;
+  useEffect(() => {
+    if (!student || !backend || !link.current || sentName || me) return;
+    let alive = true;
+    backend
+      .getStudent(student.classId, student.studentId)
+      .then((st) => {
+        if (!alive || !st || !link.current) return;
+        const n = cleanName(st.alias);
+        remember(code, n, student.studentId);
+        setName(n);
+        setSentName(n);
+        link.current.send({ t: 'join', pid: link.current.pid, name: n, studentId: student.studentId });
+      })
+      .catch(() => undefined); // annars skriver eleven sitt namn som vanligt
+    return () => {
+      alive = false;
+    };
+  }, [student?.studentId, backend, !!state, sentName, !!me]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Starttid för frågan räknas från när den syns här, så att klockorna inte behöver gå lika.
   if (state && state.phase === 'question' && shownAt.current.step !== state.step) shownAt.current = { step: state.step, at: Date.now() };

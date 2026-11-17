@@ -1,5 +1,5 @@
 import type { Browser, BrowserContext, Page } from '@playwright/test';
-import { expect, FIREBASE, test } from './helpers';
+import { addStudents, codesFor, createClass, createTeacher, expect, FIREBASE, test } from './helpers';
 
 /**
  * Klassquiz: lärarens tavla och elevplattor.
@@ -138,4 +138,51 @@ test('egna frågor: läraren skriver två frågor och klassen spelar bara dem', 
     await page.getByRole('button', { name: i === 1 ? 'Visa vinnarna' : 'Nästa fråga' }).click();
   }
   await expect(kid.getByRole('heading', { name: 'Du vann!' })).toBeVisible();
+});
+
+test('resultatet sparas på klassen och läraren ser det under Resultat', async ({ page, context, browser }) => {
+  test.setTimeout(150_000);
+  await createTeacher(page);
+  const classId = await createClass(page, '4A', 'Åk 4');
+  await addStudents(page, classId, ['Alva S']);
+  const login = (await codesFor(page, 'Alva S')).login;
+
+  await page.goto('/quiz');
+  await page.selectOption('#qz-class', { label: '4A' });
+  await page.getByRole('button', { name: 'Skriv egna frågor' }).click();
+  await page.fill('#qz-custom', 'Vad är 2 + 3?\n4\n* 5\n6');
+  await page.getByText('Bara mina egna frågor').click();
+  await page.getByRole('button', { name: 'Starta quiz' }).click();
+  const code = (await page.locator('.qz-code').innerText()).replace(/\s/g, '');
+
+  const kid = await device(browser, context);
+  if (FIREBASE) {
+    // Inloggad med elevkoden: går med automatiskt under sitt namn, kopplad till elevkontot.
+    await kid.goto(`/in/${login}`);
+    await expect(kid.getByRole('heading', { level: 1 })).toHaveText('Hej Alva S!');
+    await kid.goto(`/quiz/${code}`);
+  } else {
+    // Demoläget delar inloggning mellan flikarna, så eleven skriver sitt namn.
+    await kid.goto(`/quiz/${code}`);
+    await kid.fill('#qz-name', 'Alva S');
+    await kid.getByRole('button', { name: 'Kör!' }).click();
+  }
+  await expect(kid.getByRole('heading', { name: 'Du är med!' })).toBeVisible();
+  await expect(page.locator('.qz-players li')).toContainText('Alva S');
+
+  await page.getByRole('button', { name: 'Starta' }).click();
+  await kid.locator('.qz-pick-grid .qz-ans', { hasText: '5' }).click({ timeout: 8000 });
+  await page.getByRole('button', { name: 'Visa ställningen' }).click();
+  await page.getByRole('button', { name: 'Visa vinnarna' }).click();
+  await expect(page.locator('.qz-saved')).toContainText('Resultatet är sparat på klass 4A');
+
+  await page.getByRole('link', { name: 'Visa under Resultat' }).click();
+  const result = page.locator('.quiz-result', { hasText: 'Egna frågor' });
+  await expect(result).toContainText('1 deltagare');
+  await expect(result).toContainText('100 % rätt');
+  await result.locator('summary').click();
+  await expect(result.locator('tbody tr')).toHaveCount(1);
+  await expect(result.locator('tbody tr')).toContainText('Alva S');
+  await expect(result.locator('tbody tr')).toContainText('1 av 1');
+  if (FIREBASE) await expect(result.locator('.badge')).toHaveText('elevkonto');
 });

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { GRADES, SUBJECTS, type Grade } from '../curriculum/types';
-import { activePlayers, addPlayer, allAnswered, answer, buildQuiz, cleanName, counts, DEFAULT_QUIZ, newGame, next, openQuestion, pointsFor, publicState, quizActivities, ranking, removePlayer, reveal, showScores, startGame, summary, type QuizConfig } from './game';
+import { activePlayers, addPlayer, quizResultFrom, allAnswered, answer, buildQuiz, cleanName, counts, DEFAULT_QUIZ, newGame, next, openQuestion, pointsFor, publicState, quizActivities, ranking, removePlayer, reveal, showScores, startGame, summary, type QuizConfig } from './game';
 
 const cfg = (c: Partial<QuizConfig> = {}): QuizConfig => ({ ...DEFAULT_QUIZ, ...c });
 const key = (q: { prompt: string; detail?: string; visual?: unknown }) => `${q.prompt}|${q.detail ?? ''}|${JSON.stringify(q.visual ?? '')}`;
@@ -121,5 +121,25 @@ describe('Quizspelet', () => {
     let g = openQuestion(startGame(start()));
     for (const id of ['a', 'b', 'c']) g = answer(g, id, 0, qs[0].answer, 5000);
     expect(ranking(reveal(g)).map((r) => r.rank)).toEqual([1, 1, 1]);
+  });
+
+  it('resultatet för klassen: placering, antal rätt, elevkoppling bara när quizet hör till en klass', () => {
+    const cls = { id: 'c1', name: '4A' };
+    let g = newGame('123456', cfg({ seconds: 20 }), qs, 'Test', cls);
+    g = addPlayer(g, 'a', 'Alva', 's1');
+    g = addPlayer(g, 'b', 'Bo');
+    g = openQuestion(startGame(g));
+    g = answer(g, 'a', 0, qs[0].answer, 1000);
+    g = answer(g, 'b', 0, (qs[0].answer + 1) % qs[0].options.length, 1000);
+    const r = quizResultFrom(reveal(g), 42);
+    expect(r.at).toBe(42);
+    expect(r.players).toEqual([
+      { name: 'Alva', studentId: 's1', score: g.players.a.score, right: 1, rank: 1 },
+      { name: 'Bo', score: 0, right: 0, rank: 2 },
+    ]);
+    expect(r.questions[0]).toMatchObject({ right: 1, answered: 2 });
+    expect(r.questions[1]).toMatchObject({ right: 0, answered: 0 });
+    // Utan klass sparas ingen elevkoppling.
+    expect(addPlayer(newGame('1', cfg(), qs, 'T'), 'a', 'Alva', 's1').players.a.studentId).toBeUndefined();
   });
 });

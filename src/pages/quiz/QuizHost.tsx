@@ -2,7 +2,8 @@ import QRCode from 'qrcode';
 import { useEffect, useRef, useState } from 'react';
 import { play } from '../../lib/sound';
 import { readJSON, writeJSON } from '../../lib/storage';
-import { hrefFor, useRouter } from '../../lib/router';
+import { hrefFor, Link, useRouter } from '../../lib/router';
+import { loadBackend } from '../../backend';
 import { VisualView } from '../../play/VisualView';
 import {
   activePlayers,
@@ -14,6 +15,7 @@ import {
   next,
   openQuestion,
   publicState,
+  quizResultFrom,
   ranking,
   removePlayer,
   reveal,
@@ -50,7 +52,7 @@ export default function QuizHost() {
           setGame((g) => {
             if (!g) return g;
             if (m.t === 'join') {
-              const n = addPlayer(g, m.pid, m.name);
+              const n = addPlayer(g, m.pid, m.name, m.studentId);
               if (n !== g && !g.players[m.pid]) play('pop');
               return n;
             }
@@ -103,6 +105,23 @@ export default function QuizHost() {
   useEffect(() => {
     if (phase === 'end') play('win');
   }, [phase]);
+
+  // Spara resultatet på klassen när quizet är slut (en gång per omgång).
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const toSave = game && game.phase === 'end' && game.classId && !game.saved ? game : null;
+  useEffect(() => {
+    if (!toSave) return;
+    let alive = true;
+    setSaveError(null);
+    loadBackend()
+      .then((b) => b.saveQuizResult(toSave.classId!, quizResultFrom(toSave)))
+      .then(() => alive && setGame((g) => (g ? { ...g, saved: true } : g)))
+      .catch((e: Error) => alive && setSaveError(e.message || 'Kunde inte spara resultatet.'));
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toSave?.step]);
 
   const advance = () =>
     setGame((g) => {
@@ -249,7 +268,7 @@ export default function QuizHost() {
         </main>
       )}
 
-      {game.phase === 'end' && <End game={game} onNew={quit} onAgain={() => setGame((g) => (g ? { ...g, phase: 'lobby', index: 0, step: g.step + 1, prevRanks: {}, players: Object.fromEntries(Object.entries(g.players).map(([id, p]) => [id, { ...p, score: 0, streak: 0, answers: {} }])) } : g))} />}
+      {game.phase === 'end' && <End game={game} saveError={saveError} onNew={quit} onAgain={() => setGame((g) => (g ? { ...g, phase: 'lobby', index: 0, step: g.step + 1, prevRanks: {}, saved: false, players: Object.fromEntries(Object.entries(g.players).map(([id, p]) => [id, { ...p, score: 0, streak: 0, answers: {} }])) } : g))} />}
     </div>
   );
 }
@@ -372,7 +391,7 @@ function Leaderboard({ game, limit }: { game: Game; limit: number }) {
   );
 }
 
-function End({ game, onNew, onAgain }: { game: Game; onNew: () => void; onAgain: () => void }) {
+function End({ game, saveError, onNew, onAgain }: { game: Game; saveError: string | null; onNew: () => void; onAgain: () => void }) {
   const top = ranking(game).slice(0, 3);
   const [showSummary, setShowSummary] = useState(false);
   const sum = summary(game);
@@ -381,6 +400,20 @@ function End({ game, onNew, onAgain }: { game: Game; onNew: () => void; onAgain:
   return (
     <main className="qz-end">
       <h1>Bra jobbat, alla!</h1>
+      {game.classId && (
+        <p className={`qz-saved${saveError ? ' error' : ''}`} role="status">
+          {saveError ? (
+            <>Resultatet kunde inte sparas: {saveError}</>
+          ) : game.saved ? (
+            <>
+              Resultatet är sparat på klass {game.className}.{' '}
+              <Link to={`/larare/klass/${game.classId}/resultat`}>Visa under Resultat</Link>
+            </>
+          ) : (
+            <>Sparar resultatet …</>
+          )}
+        </p>
+      )}
       <div className="qz-podium">
         {order.map((i) => (
           <div key={top[i].id} className={`qz-step p${i + 1}`}>

@@ -44,6 +44,7 @@ import {
   type Session,
   type Student,
   type StudentCodes,
+  type QuizResult,
   type WordListDoc,
 } from './types';
 
@@ -333,6 +334,18 @@ export class FirebaseBackend implements Backend {
   }
   async deleteAssignment(classId: string, id: string) {
     await wrap(() => deleteDoc(doc(this.sub(classId, 'assignments'), id)));
+  }
+
+  async saveQuizResult(classId: string, r: Omit<QuizResult, 'id' | 'classId'>) {
+    await wrap(async () => {
+      await setDoc(doc(this.sub(classId, 'quizResults')), JSON.parse(JSON.stringify(r)));
+    });
+  }
+  async listQuizResults(classId: string) {
+    return wrap(async () => {
+      const snap = await getDocs(this.sub(classId, 'quizResults'));
+      return snap.docs.map((d) => ({ id: d.id, classId, ...d.data() }) as QuizResult).sort((a, b) => b.at - a.at);
+    });
   }
 
   async listWordLists(classId: string) {

@@ -71,6 +71,18 @@ export interface WordListDoc {
   createdAt: number;
 }
 
+/** Ett klassquiz som har spelats, sparat på klassen. Bara läraren ser det. */
+export interface QuizResult {
+  id: string;
+  classId: string;
+  title: string;
+  at: number;
+  /** Per fråga: hur många som svarade och hur många som hade rätt. */
+  questions: { prompt: string; answer: string; right: number; answered: number }[];
+  /** Per deltagare. studentId finns när eleven var inloggad med sin elevkod. */
+  players: { name: string; studentId?: string; score: number; right: number; rank: number }[];
+}
+
 export interface ChildLink {
   classId: string;
   studentId: string;
@@ -116,6 +128,9 @@ export interface Backend {
   listAssignments(classId: string): Promise<Assignment[]>;
   saveAssignment(classId: string, a: Omit<Assignment, 'id' | 'classId' | 'createdAt'> & { id?: string }): Promise<Assignment>;
   deleteAssignment(classId: string, id: string): Promise<void>;
+
+  saveQuizResult(classId: string, r: Omit<QuizResult, 'id' | 'classId'>): Promise<void>;
+  listQuizResults(classId: string): Promise<QuizResult[]>;
 
   listWordLists(classId: string): Promise<WordListDoc[]>;
   saveWordList(classId: string, w: Omit<WordListDoc, 'id' | 'classId' | 'createdAt'> & { id?: string }): Promise<WordListDoc>;

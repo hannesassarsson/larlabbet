@@ -1009,3 +1009,17 @@
   color: #9a2a1c;
   font-weight: 600;
 }
+.qz-saved {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  font-weight: 700;
+}
+.qz-saved a {
+  color: #fff;
+  font-weight: 800;
+}
+.qz-saved.error {
+  background: #ffe1dd;
+  color: #7a1a10;
+}

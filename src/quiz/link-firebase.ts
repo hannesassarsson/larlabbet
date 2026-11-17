@@ -39,7 +39,7 @@ export async function rehostFirebase(code: string): Promise<HostLink> {
     for (const ch of snap.docChanges()) {
       if (ch.type === 'removed') continue;
       const d = ch.doc.data();
-      emit({ t: 'join', pid: ch.doc.id, name: String(d.name ?? '') });
+      emit({ t: 'join', pid: ch.doc.id, name: String(d.name ?? ''), studentId: typeof d.studentId === 'string' ? d.studentId : undefined });
     }
   });
   const offAnswers = onSnapshot(collection(ref, 'answers'), (snap) => {
@@ -108,7 +108,7 @@ export async function joinFirebase(code: string): Promise<{ link: PlayerLink; st
     link: {
       pid: uid,
       send(m) {
-        if (m.t === 'join') void setDoc(doc(ref, 'players', uid), { name: m.name, at: serverTimestamp() });
+        if (m.t === 'join') void setDoc(doc(ref, 'players', uid), { name: m.name, at: serverTimestamp(), ...(m.studentId ? { studentId: m.studentId } : {}) });
         else if (m.t === 'answer') void setDoc(doc(ref, 'answers', `${uid}_${m.index}`), { pid: uid, index: m.index, choice: m.choice, ms: m.ms }).catch(() => undefined);
       },
       onState(cb) {
