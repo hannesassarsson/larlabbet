@@ -27,6 +27,12 @@ export const test = base.extend<{ pageErrors: string[] }>({
 });
 export { expect };
 
+/** Körs testerna mot Firebase-emulatorn (npm run test:firebase) i stället för demoläget? */
+export const FIREBASE = process.env.FIREBASE_E2E === '1';
+
+/** Ny e-postadress för varje körning, eftersom emulatorn minns konton mellan testerna. */
+export const uniqueEmail = (name: string) => `${name}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}@test.se`;
+
 /* ---------- Spellägen i sessionStorage ----------
    Spelen sparar pågående omgång i sessionStorage. Testerna läser därifrån för
    att veta det rätta svaret, så att de kan spela igenom hela omgångar. */
@@ -97,7 +103,7 @@ export async function playRunner(page: Page, { wrongFirst = 0 } = {}) {
 
 /* ---------- Skoldelen (demoläge) ---------- */
 
-export async function createTeacher(page: Page, email = 'larare@skola.se', password = 'hemligt123') {
+export async function createTeacher(page: Page, email = uniqueEmail('larare'), password = 'hemligt123') {
   await page.goto('/larare');
   await page.getByRole('tab', { name: 'Skapa konto' }).click();
   await page.fill('#auth-name', 'Karin Lärare');

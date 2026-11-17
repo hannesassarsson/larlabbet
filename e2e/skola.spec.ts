@@ -1,26 +1,29 @@
-import { addStudents, codesFor, createClass, createTeacher, expect, mode, playRunner, test } from './helpers';
+import { addStudents, codesFor, createClass, createTeacher, expect, FIREBASE, mode, playRunner, test, uniqueEmail } from './helpers';
 
 /**
- * Skoldelen i demoläge (utan Firebase): lärare → elev → förälder → lärare.
- * Firebase-reglerna testas inte här; se README.
+ * Skoldelen: lärare → elev → förälder → lärare.
+ * Körs i demoläget (npm run test:e2e) och mot Firebase-emulatorn med de riktiga
+ * reglerna (npm run test:firebase).
  */
 
 test('hela kedjan: lärare ger uppdrag, elev gör det, förälder och lärare ser resultatet', async ({ page }) => {
   let codes = { login: '', parent: '' };
   let noahOld = '';
   let classId = '';
+  const karin = uniqueEmail('karin');
+  const per = uniqueEmail('per');
 
   await test.step('skolportalen', async () => {
     await page.goto('/skola');
     await expect(page.locator('.role-card')).toHaveCount(3);
-    await expect(page.locator('.demo-banner')).toBeVisible();
+    await expect(page.locator('.demo-banner')).toHaveCount(FIREBASE ? 0 : 1);
   });
 
   await test.step('läraren skapar konto, klass och elever', async () => {
     await page.goto('/larare');
     await page.getByRole('tab', { name: 'Skapa konto' }).click();
     await page.fill('#auth-name', 'Karin');
-    await page.fill('#auth-email', 'karin@skola.se');
+    await page.fill('#auth-email', karin);
     await page.fill('#auth-password', 'hemligt123');
     await expect(page.getByRole('button', { name: 'Skapa konto', exact: true })).toBeDisabled(); // kräver godkännande
     await page.locator('.check input').check();
@@ -105,7 +108,7 @@ test('hela kedjan: lärare ger uppdrag, elev gör det, förälder och lärare se
     await page.goto('/foralder');
     await page.getByRole('tab', { name: 'Skapa konto' }).click();
     await page.fill('#auth-name', 'Per');
-    await page.fill('#auth-email', 'per@hem.se');
+    await page.fill('#auth-email', per);
     await page.fill('#auth-password', 'losenord1');
     await page.locator('.check input').check();
     await page.getByRole('button', { name: 'Skapa konto', exact: true }).click();
@@ -122,7 +125,7 @@ test('hela kedjan: lärare ger uppdrag, elev gör det, förälder och lärare se
 
   await test.step('läraren ser resultatet', async () => {
     await page.goto('/larare');
-    await page.fill('#auth-email', 'karin@skola.se');
+    await page.fill('#auth-email', karin);
     await page.fill('#auth-password', 'fel-lösenord');
     await page.getByRole('button', { name: 'Logga in', exact: true }).click();
     await expect(page.locator('.auth-card')).toContainText('Fel e-postadress');

@@ -9,3 +9,6 @@ test-results
 playwright-report
 blob-report
 .netlify
+dist-emulator
+test-results-firebase
+playwright-report-firebase

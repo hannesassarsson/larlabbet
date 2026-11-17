@@ -1,5 +1,6 @@
 import { initializeApp, type FirebaseOptions } from 'firebase/app';
 import {
+  connectAuthEmulator,
   createUserWithEmailAndPassword,
   getAuth,
   onAuthStateChanged,
@@ -13,6 +14,7 @@ import {
 } from 'firebase/auth';
 import {
   collection,
+  connectFirestoreEmulator,
   deleteDoc,
   doc,
   FieldPath,
@@ -98,6 +100,12 @@ export class FirebaseBackend implements Backend {
     // Lokal cache gör att resultat kan sparas även när nätet är borta en stund.
     // ignoreUndefinedProperties: fält som saknar värde hoppas över i stället för att hela skrivningen avvisas.
     this.db = initializeFirestore(app, { ignoreUndefinedProperties: true, localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
+    // Testerna kör mot Firebase-emulatorn på den egna datorn (se npm run test:firebase).
+    if (import.meta.env.VITE_FIREBASE_EMULATOR === '1') {
+      const host = import.meta.env.VITE_FIREBASE_EMULATOR_HOST || '127.0.0.1';
+      connectAuthEmulator(this.auth, `http://${host}:9099`, { disableWarnings: true });
+      connectFirestoreEmulator(this.db, host, 8080);
+    }
     onAuthStateChanged(this.auth, (u) => void this.resolve(u));
   }
 

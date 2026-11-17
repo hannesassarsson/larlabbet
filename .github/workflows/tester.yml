@@ -31,6 +31,40 @@ jobs:
           path: playwright-report/
           retention-days: 14
 
+  # Mot Firebase-emulatorn med de riktiga reglerna: regeltester (vem får läsa och
+  # skriva vad) och skolflödet och klassquizet i webbläsaren, med en egen användare
+  # per elev. Fångar fel som demoläget inte kan se.
+  firebase:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/firebase/emulators
+          key: firebase-emulators-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:firebase
+        env:
+          CI: 'true'
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: rapport-firebase
+          path: |
+            playwright-report-firebase/
+            test-results-firebase/
+          retention-days: 14
+
   # Safaris motor (WebKit). Närmast en iPad som går att köra här, men inte samma sak.
   # Blockerar inte: visar avvikelser i Safari utan att stoppa allt annat.
   webkit:

@@ -1,10 +1,19 @@
-import type { Page } from '@playwright/test';
-import { expect, test } from './helpers';
+import type { Browser, BrowserContext, Page } from '@playwright/test';
+import { expect, FIREBASE, test } from './helpers';
 
 /**
- * Klassquiz i demoläget: lärarens tavla och två elevplattor i samma webbläsare
- * (BroadcastChannel). Med Firebase går samma flöde över nätet – det är inte testat här.
+ * Klassquiz: lärarens tavla och elevplattor.
+ * - Demoläget (npm run test:e2e): flikar i samma webbläsare, BroadcastChannel.
+ * - Firebase-emulatorn (npm run test:firebase): varje elev i en egen webbläsare
+ *   med en egen anonym användare, som på riktiga plattor.
  */
+
+/** En ny elevplatta. */
+async function device(browser: Browser, context: BrowserContext): Promise<Page> {
+  if (!FIREBASE) return context.newPage();
+  const ctx = await browser.newContext({ viewport: { width: 820, height: 1180 }, hasTouch: true, locale: 'sv-SE' });
+  return ctx.newPage();
+}
 async function joinAs(page: Page, code: string, name: string) {
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
@@ -19,8 +28,8 @@ async function joinAs(page: Page, code: string, name: string) {
   return errors;
 }
 
-test('klassquiz: tavlan, två elever, poäng, ställning och pall', async ({ page, context }) => {
-  test.setTimeout(90_000);
+test('klassquiz: tavlan, två elever, poäng, ställning och pall', async ({ page, context, browser }) => {
+  test.setTimeout(120_000);
   await page.goto('/quiz');
   await page.getByRole('radiogroup', { name: 'Ämne' }).getByRole('radio', { name: 'NO' }).click();
   await page.getByRole('radiogroup', { name: 'Årskurs' }).getByRole('radio', { name: '5', exact: true }).click();
@@ -37,13 +46,13 @@ test('klassquiz: tavlan, två elever, poäng, ställning och pall', async ({ pag
   const code = (await page.locator('.qz-code').innerText()).replace(/\s/g, '');
   expect(code).toMatch(/^\d{6}$/);
 
-  const alva = await context.newPage();
-  const bo = await context.newPage();
+  const alva = await device(browser, context);
+  const bo = await device(browser, context);
   const errs = [...(await joinAs(alva, code, 'Alva')), ...(await joinAs(bo, code, 'Bo'))];
   await expect(page.locator('.qz-players li')).toHaveCount(2);
 
   // En elev till, som läraren tar bort.
-  const extra = await context.newPage();
+  const extra = await device(browser, context);
   await joinAs(extra, code, 'Busfrö');
   await page.getByRole('button', { name: 'Ta bort Busfrö' }).click();
   await expect(extra.getByRole('heading', { name: 'Du är inte med i quizet' })).toBeVisible();
@@ -89,11 +98,11 @@ test('fel kod ger ett tydligt besked', async ({ page }) => {
   await expect(page.getByRole('alert')).toContainText('inget quiz med den koden');
 });
 
-test('läraren kan ladda om tavlan mitt i quizet', async ({ page, context }) => {
+test('läraren kan ladda om tavlan mitt i quizet', async ({ page, context, browser }) => {
   await page.goto('/quiz');
   await page.getByRole('button', { name: 'Starta quiz' }).click();
   const code = (await page.locator('.qz-code').innerText()).replace(/\s/g, '');
-  const kid = await context.newPage();
+  const kid = await device(browser, context);
   await joinAs(kid, code, 'Ines');
   await page.reload();
   await expect(page.locator('.qz-players li')).toHaveCount(1);
