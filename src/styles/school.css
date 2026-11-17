@@ -1498,8 +1498,6 @@ button.item-row:active {
   font-size: 22px;
 }
 .quiz-result {
-  display: grid;
-  gap: 12px;
   padding: 0;
   overflow: hidden;
 }
@@ -1515,11 +1513,10 @@ button.item-row:active {
 .quiz-result[open] > summary {
   border-bottom: 1px solid var(--line);
 }
-.quiz-result > :not(summary) {
-  margin-inline: 18px;
-}
-.quiz-result > :last-child {
-  margin-bottom: 18px;
+.quiz-result-body {
+  display: grid;
+  gap: 14px;
+  padding: 14px 18px 18px;
 }
 .quiz-result h3 {
   font-size: 17px;

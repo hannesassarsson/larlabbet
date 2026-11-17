@@ -1,18 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import QRCode from 'qrcode';
-import {
-  assignmentProgress,
-  formatCode,
-  useAsync,
-  useBackend,
-  type Assignment,
-  type Backend,
-  type ClassRoom,
-  type Student,
-  type StudentCodes,
-  type QuizResult,
-  type WordListDoc,
-} from '../../backend';
+import { assignmentProgress, formatCode, useAsync, useBackend, type Assignment, type Backend, type ClassRoom, type Student, type StudentCodes, type QuizResult, type WordListDoc } from '../../backend';
 import { ChoiceGroup, Overlay } from '../../components/GameShell';
 import { IconCheck, IconRestart, IconTrash } from '../../components/Icons';
 import { parseWordList } from '../../curriculum/engelska';
@@ -184,9 +172,7 @@ function Klass({ backend, classId, tab }: { backend: Backend; classId: string; t
         {TABS.map((t) => (
           <Link key={t.id} to={`/larare/klass/${classId}/${t.id}`} className="tab" aria-current={t.id === tab ? 'page' : undefined}>
             {t.label}
-            <span className="tab-count">
-              {t.id === 'elever' ? students.length : t.id === 'uppdrag' ? assignments.length : t.id === 'glosor' ? wordlists.length : ''}
-            </span>
+            <span className="tab-count">{t.id === 'elever' ? students.length : t.id === 'uppdrag' ? assignments.length : t.id === 'glosor' ? wordlists.length : ''}</span>
           </Link>
         ))}
       </nav>
@@ -234,7 +220,16 @@ function ClassSettings({ backend, cls, onClose, onSaved, onDeleted }: { backend:
         <h3>Ta bort klassen</h3>
         <p>Elever, koder, uppdrag, glosor och resultat tas bort för gott. Skriv klassens namn för att bekräfta.</p>
         <input id="settings-confirm" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder={cls.name} aria-label="Skriv klassens namn" />
-        <button className="btn btn-danger" disabled={confirm.trim() !== cls.name} onClick={() => backend.deleteClass(cls.id).then(onDeleted).catch((e) => setError(errorText(e)))}>
+        <button
+          className="btn btn-danger"
+          disabled={confirm.trim() !== cls.name}
+          onClick={() =>
+            backend
+              .deleteClass(cls.id)
+              .then(onDeleted)
+              .catch((e) => setError(errorText(e)))
+          }
+        >
           <IconTrash /> Ta bort klassen
         </button>
       </div>
@@ -266,7 +261,7 @@ function StudentsTab({ backend, cls, students, codes, reload }: { backend: Backe
       const free = AVATARS.filter((a) => !used.has(a));
       await backend.addStudents(
         cls.id,
-        aliases.map((alias, i) => ({ alias, avatar: free[i] ?? AVATARS[(students.length + i) % AVATARS.length] }))
+        aliases.map((alias, i) => ({ alias, avatar: free[i] ?? AVATARS[(students.length + i) % AVATARS.length] })),
       );
       setText('');
       reload();
@@ -318,7 +313,16 @@ function StudentsTab({ backend, cls, students, codes, reload }: { backend: Backe
                   <td className="code">{codes[s.id] ? formatCode(codes[s.id].parentCode) : '–'}</td>
                   <td className="muted">{s.lastActive ? new Date(s.lastActive).toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' }) : 'Aldrig'}</td>
                   <td className="row-actions">
-                    <button className="btn btn-soft btn-small" onClick={() => backend.renewCodes(cls.id, s.id).then(reload).catch((e) => setError(errorText(e)))} title="De gamla koderna slutar fungera">
+                    <button
+                      className="btn btn-soft btn-small"
+                      onClick={() =>
+                        backend
+                          .renewCodes(cls.id, s.id)
+                          .then(reload)
+                          .catch((e) => setError(errorText(e)))
+                      }
+                      title="De gamla koderna slutar fungera"
+                    >
                       <IconRestart /> Nya koder
                     </button>
                     <button className="icon-btn small" onClick={() => setRemove(s)} aria-label={`Ta bort ${s.alias}`}>
@@ -428,7 +432,7 @@ function AssignmentsTab({
         sections: a.items.filter((it) => getActivity(it.activityId)?.id !== 'ma-monster').map((it) => ({ activityId: it.activityId, level: it.level, count: it.count })),
         words: list ? list.pairs.map((p) => `${p.sv} – ${p.en}`).join('\n') : '',
       },
-      navigate
+      navigate,
     );
   };
   return (
@@ -525,7 +529,13 @@ function WordListsTab({ backend, cls, lists, reload }: { backend: Backend; cls: 
               <span className="class-grade small">{w.pairs.length}</span>
               <span>
                 <b>{w.title}</b>
-                <small>{w.pairs.slice(0, 3).map((p) => p.en).join(', ')} …</small>
+                <small>
+                  {w.pairs
+                    .slice(0, 3)
+                    .map((p) => p.en)
+                    .join(', ')}{' '}
+                  …
+                </small>
               </span>
             </button>
           ))}
@@ -637,7 +647,8 @@ function ResultsTab({ students, assignments, quizResults }: { students: Student[
         </table>
       </div>
       <p className="legend">
-        <span className="result-cell good">80 %+</span> <span className="result-cell mid">50–79 %</span> <span className="result-cell low">under 50 %</span> <span className="result-cell none">–</span> inte påbörjat
+        <span className="result-cell good">80 %+</span> <span className="result-cell mid">50–79 %</span> <span className="result-cell low">under 50 %</span> <span className="result-cell none">–</span>{' '}
+        inte påbörjat
       </p>
       {detail && (
         <Overlay label="Resultat" onClose={() => setDetail(null)}>
@@ -689,51 +700,53 @@ function QuizResults({ results, students }: { results: QuizResult[]; students: S
                   {new Date(r.at).toLocaleDateString('sv-SE')} · {r.players.length} deltagare · {Math.round(share * 100)} % rätt
                 </span>
               </summary>
-              <div className="table-wrap">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Plats</th>
-                      <th>Namn</th>
-                      <th>Rätt</th>
-                      <th>Poäng</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {r.players.map((p, k) => (
-                      <tr key={k}>
-                        <td>{p.rank}</td>
-                        <td>
-                          {p.studentId && alias.has(p.studentId) ? (
-                            <>
-                              <b>{alias.get(p.studentId)}</b> <span className="badge">elevkonto</span>
-                            </>
-                          ) : (
-                            p.name
-                          )}
-                        </td>
-                        <td>
-                          {p.right} av {total}
-                        </td>
-                        <td>{p.score}</td>
+              <div className="quiz-result-body">
+                <div className="table-wrap">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Plats</th>
+                        <th>Namn</th>
+                        <th>Rätt</th>
+                        <th>Poäng</th>
                       </tr>
+                    </thead>
+                    <tbody>
+                      {r.players.map((p, k) => (
+                        <tr key={k}>
+                          <td>{p.rank}</td>
+                          <td>
+                            {p.studentId && alias.has(p.studentId) ? (
+                              <>
+                                <b>{alias.get(p.studentId)}</b> <span className="badge">elevkonto</span>
+                              </>
+                            ) : (
+                              p.name
+                            )}
+                          </td>
+                          <td>
+                            {p.right} av {total}
+                          </td>
+                          <td>{p.score}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <h3>{hard.length ? 'Frågor där färre än hälften hade rätt' : 'Mer än hälften hade rätt på alla frågor.'}</h3>
+                {hard.length > 0 && (
+                  <ul className="detail-list">
+                    {hard.map((q) => (
+                      <li key={q.i}>
+                        <b>{q.prompt}</b>
+                        <span>
+                          Svar: {q.answer} · {Math.round(q.share * 100)} % rätt
+                        </span>
+                      </li>
                     ))}
-                  </tbody>
-                </table>
+                  </ul>
+                )}
               </div>
-              <h3>{hard.length ? 'Frågor där färre än hälften hade rätt' : 'Mer än hälften hade rätt på alla frågor.'}</h3>
-              {hard.length > 0 && (
-                <ul className="detail-list">
-                  {hard.map((q) => (
-                    <li key={q.i}>
-                      <b>{q.prompt}</b>
-                      <span>
-                        Svar: {q.answer} · {Math.round(q.share * 100)} % rätt
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </details>
           );
         })
@@ -815,7 +828,9 @@ function Kort({ backend, classId }: { backend: Backend; classId: string }) {
                 Följ ditt barns uppdrag i Lärlabbet. Gå till <span className="url">{origin.replace(/^https?:\/\//, '')}/foralder</span>, skapa ett konto och skriv in föräldrakoden:
               </p>
               <span className="big-code">{formatCode(c.parentCode)}</span>
-              <small>Koden ger bara tillgång till {s.alias}s uppdrag och resultat i klassen {cls.name}.</small>
+              <small>
+                Koden ger bara tillgång till {s.alias}s uppdrag och resultat i klassen {cls.name}.
+              </small>
             </div>
           );
         })}
