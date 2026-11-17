@@ -178,7 +178,7 @@ export default function QuizHost() {
       {game.phase === 'ready' && (
         <main className="qz-center qz-ready">
           <p className="qz-kicker">
-            {subjectName(q.subject)} · {q.topic}
+            {q.subject === 'egen' ? 'Egen fråga' : `${subjectName(q.subject)} · ${q.topic}`}
           </p>
           <h1 className="qz-big-prompt">{q.prompt}</h1>
           <div className="qz-count-ring" aria-hidden="true">

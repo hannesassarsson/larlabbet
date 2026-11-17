@@ -2,6 +2,7 @@ import { ACTIVITIES, getActivity } from '../curriculum';
 import { parseWordList } from '../curriculum/engelska';
 import { SUBJECTS, type Activity, type ChoiceOption, type Grade, type SubjectId, type Visual } from '../curriculum/types';
 import { seeded, shuffle, type Rng } from '../lib/random';
+import { parseCustom } from './custom';
 
 /**
  * Klassquiz: läraren visar frågorna på tavlan och eleverna svarar på sina
@@ -16,7 +17,8 @@ export interface QuizQuestion {
   options: ChoiceOption[];
   answer: number;
   explain?: string;
-  subject: SubjectId;
+  /** 'egen' = en fråga läraren har skrivit själv. */
+  subject: SubjectId | 'egen';
   topic: string;
 }
 
@@ -31,10 +33,14 @@ export interface QuizConfig {
   showOnDevice: boolean;
   /** Lärarens egna glosor, en per rad. Används av övningen "Egna glosor". */
   words: string;
+  /** Lärarens egna frågor som text (se custom.ts). */
+  custom: string;
+  /** Bara egna frågor, inga från övningarna. */
+  customOnly: boolean;
   seed: number;
 }
 
-export const DEFAULT_QUIZ: QuizConfig = { subject: 'alla', grade: 3, activityIds: [], count: 15, seconds: 20, showOnDevice: true, words: '', seed: 1 };
+export const DEFAULT_QUIZ: QuizConfig = { subject: 'alla', grade: 3, activityIds: [], count: 15, seconds: 20, showOnDevice: true, words: '', custom: '', customOnly: false, seed: 1 };
 export const COUNTS = [10, 15, 20, 30, 40];
 export const SECONDS = [10, 20, 30, 60];
 
@@ -150,6 +156,17 @@ function toQuiz(q: import('../curriculum/types').ChoiceQuestion, a: Activity, rn
   };
 }
 
+/**
+ * Hela quizet: lärarens egna frågor först, i den ordning de är skrivna, sedan
+ * frågor från övningarna upp till valt antal. "Bara egna" ger bara de egna.
+ */
+export function assembleQuiz(config: QuizConfig): QuizQuestion[] {
+  const own = parseCustom(config.custom ?? '').questions;
+  if (config.customOnly) return own;
+  const rest = Math.max(0, config.count - own.length);
+  return [...own, ...(rest ? buildQuiz({ ...config, count: rest }) : [])];
+}
+
 /** Undviker att samma övning kommer två gånger i rad när det går. */
 function interleave(qs: QuizQuestion[]): QuizQuestion[] {
   const out: QuizQuestion[] = [];
@@ -162,7 +179,7 @@ function interleave(qs: QuizQuestion[]): QuizQuestion[] {
   return out;
 }
 
-export const subjectName = (s: SubjectId) => SUBJECTS.find((x) => x.id === s)!.short;
+export const subjectName = (s: SubjectId | 'egen') => (s === 'egen' ? 'Egen fråga' : SUBJECTS.find((x) => x.id === s)!.short);
 
 /* ================= Poäng ================= */
 

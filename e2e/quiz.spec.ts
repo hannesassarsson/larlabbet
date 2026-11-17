@@ -109,3 +109,33 @@ test('läraren kan ladda om tavlan mitt i quizet', async ({ page, context, brows
   await page.getByRole('button', { name: 'Starta' }).click();
   await expect(kid.locator('.qz-pick-grid .qz-ans').first()).toBeVisible({ timeout: 6000 });
 });
+
+test('egna frågor: läraren skriver två frågor och klassen spelar bara dem', async ({ page, context, browser }) => {
+  await page.goto('/quiz');
+  await page.getByRole('button', { name: 'Skriv egna frågor' }).click();
+  await page.fill('#qz-custom', 'Vilken månad har jul?\nnovember\n* december\n\nUtan rätt svar?\nja\nnej\n\nVad heter läraren?\n* Karin\nPer\nOlle\nFörklaring: Hon heter Karin.');
+  await expect(page.locator('.qz-custom-status')).toContainText('2 frågor klara');
+  await expect(page.locator('.qz-problems li')).toHaveCount(1);
+  await expect(page.locator('.qz-problems')).toContainText('markera rätt svar');
+  await page.getByText('Bara mina egna frågor').click();
+  await expect(page.getByRole('heading', { name: '2 frågor' })).toBeVisible();
+  await expect(page.getByRole('radiogroup', { name: 'Ämne' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Starta quiz' }).click();
+  const code = (await page.locator('.qz-code').innerText()).replace(/\s/g, '');
+  const kid = await device(browser, context);
+  await kid.goto(`/quiz/${code}`);
+  await kid.fill('#qz-name', 'Ines');
+  await kid.getByRole('button', { name: 'Kör!' }).click();
+  await expect(page.locator('.qz-players li')).toHaveCount(1);
+  await page.getByRole('button', { name: 'Starta' }).click();
+  for (const [i, right] of [[0, 'december'], [1, 'Karin']] as const) {
+    await expect(page.locator('.qz-prompt')).toBeVisible({ timeout: 6000 });
+    await expect(page.locator('.qz-prompt')).toHaveText(i === 0 ? 'Vilken månad har jul?' : 'Vad heter läraren?');
+    await kid.locator('.qz-pick-grid .qz-ans', { hasText: right }).click();
+    await expect(page.locator('.qz-answers.revealed')).toBeVisible();
+    if (i === 1) await expect(page.locator('.qz-explain')).toHaveText('Hon heter Karin.');
+    await page.getByRole('button', { name: 'Visa ställningen' }).click();
+    await page.getByRole('button', { name: i === 1 ? 'Visa vinnarna' : 'Nästa fråga' }).click();
+  }
+  await expect(kid.getByRole('heading', { name: 'Du vann!' })).toBeVisible();
+});

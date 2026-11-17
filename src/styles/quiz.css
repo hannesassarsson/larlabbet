@@ -986,3 +986,26 @@
 .qz-pick-grid.n3 > :last-child {
   grid-column: 1 / -1;
 }
+
+/* Egna frågor */
+.qz-custom textarea {
+  width: 100%;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.qz-custom-status {
+  display: grid;
+  gap: 6px;
+}
+.qz-custom-status .ok {
+  font-weight: 800;
+  color: #157a4a;
+}
+.qz-problems {
+  display: grid;
+  gap: 4px;
+  padding-left: 1.2em;
+  color: #9a2a1c;
+  font-weight: 600;
+}
