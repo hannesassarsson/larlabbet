@@ -7,6 +7,8 @@ import { addStudents, codesFor, createClass, createTeacher, expect, FIREBASE, mo
  */
 
 test('hela kedjan: lärare ger uppdrag, elev gör det, förälder och lärare ser resultatet', async ({ page }) => {
+  // Lång kedja med fyra övningar: behöver mer tid i långsammare motorer (WebKit) och mot Firebase.
+  test.setTimeout(180_000);
   let codes = { login: '', parent: '' };
   let noahOld = '';
   let classId = '';
