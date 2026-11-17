@@ -61,9 +61,17 @@ export async function runState(page: Page): Promise<any | null> {
  * `wrongFirst`: antal frågor i början där ett fel svar väljs först.
  */
 export async function playRunner(page: Page, { wrongFirst = 0 } = {}) {
+  // Övningen kan behöva laddas först (mot Firebase): tryck Börja när knappen dyker upp.
   const start = page.getByRole('button', { name: 'Börja', exact: true });
-  if (await start.count()) await start.click();
-  await expect.poll(() => runState(page)).not.toBeNull();
+  await expect
+    .poll(
+      async () => {
+        if (await start.isVisible()) await start.click().catch(() => undefined);
+        return runState(page);
+      },
+      { timeout: 15_000 }
+    )
+    .not.toBeNull();
   for (let n = 0; n < 40; n++) {
     const st = await runState(page);
     if (!st) break;
